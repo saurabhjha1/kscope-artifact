@@ -1,0 +1,49 @@
+
+#/ Begin doc
+
+# Report instances of nodes with lock time-out events.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-03-01T09:22:00-06:00 snx11001n021 kernel: [3170916.888543] LustreError: 121099:0:(ldlm_request.c:91:ldlm_expired_completion_wait()) ### lock timed out (enqueued at 1362151120, 200s ago); not entering recovery in server code, just going back to sleep ns: filter-snx11001-OST0046_UUID lock: ffff8800ae288000/0x12453e0dc1bfad6c lrc: 3/0,1 mode: --/PW res: 16220401/0 rrc: 2 type: EXT [0->18446744073709551615] (req 0->18446744073709551615) flags: 0x80004000 remote: 0x0 expref: -99 pid: 121099 timeout 0
+
+#/ End doc
+
+
+type= SingleWith2Thresholds
+continue= Takenext
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(lock\stimed\sout).*(going\sback\sto\ssleep)
+desc= lock timeout
+action= lcall %lock_timeout_count -> ( sub { $lock_timeout_counter = 0; } ) ;\
+	eval %logp ( chomp($logp = `/usr/bin/basename $+{_inputsrc}`); return "$logp" ) ;\
+	add LOCK_TIMEOUT System:     %site %host, %mf ;\
+	add LOCK_TIMEOUT Fileystem:  %{fs}$2 ;\
+	add LOCK_TIMEOUT Event:      $3 $4 ;\
+	add LOCK_TIMEOUT Time:      $1  %Tmsg;\
+	add LOCK_TIMEOUT %t  --  %tmsg ;\
+	add LOCK_TIMEOUT %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add LOCK_TIMEOUT %{rule_info}snx_lock_timeout.sr ;\
+	add LOCK_TIMEOUT %N ;\
+	add LOCK_TIMEOUT Summary of nodes having lock timed out events: ;\
+	add LOCK_TIMEOUT ----------------------------------------------
+window= 1
+thresh= 1
+desc2= Report summary lock timeout events
+action2= report LOCK_TIMEOUT %cmd "%{subject}: %lock_timeout_count nodes had lock timed out.  ($1)" %list ;\
+	 delete LOCK_TIMEOUT
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(lock\stimed\sout).*(going\sback\sto\ssleep)
+desc= Count nodes that had lock timeout events
+action= lcall %lock_timeout_count -> ( sub { ++$lock_timeout_counter; } ) ;\
+	add LOCK_TIMEOUT snx$2$3  $1

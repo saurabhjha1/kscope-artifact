@@ -1,0 +1,73 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Report instances of disk failures on a Sonexion SSU.  This will generate
+# up to one email per node, per minute.  If several drives fail during that
+# minute on that node, only one email will be sent.  But if 2 drives fail on
+# the same node a few minutes apart, then 2 emails will be sent.
+#
+# Origin
+# ~~~~~~
+# */var/log/messages*
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+# The update to this rule supports the logged syntax from software released
+# after June 2014 as well as that released prior to June 2014.
+#
+# Syntax from Sonexion software released after June 2014:
+#
+# 2014-08-08T11:03:29-05:00 snx11002n029 kernel: md/raid:md1: Disk failure on sdz, disabling device.
+#
+#
+# Syntax from Sonexion software released prior to June 2014:
+#
+#   2013-03-11T17:12:18-05:00 snx11001n020 kernel: [4058178.488769] md/raid1:md136: Disk failure on sdao13, disabling device.
+#   2013-03-11T17:12:18-05:00 snx11001n020 kernel: [4058178.511449] md/raid:md4: Disk failure on sdac, disabling device.
+#   2013-03-11T17:12:18-05:00 snx11001n020 kernel: [4058178.529163] md/raid:md4: Disk failure on sdap, disabling device.
+#   2013-03-11T17:12:18-05:00 snx11001n020 kernel: [4058178.546858] md/raid:md4: Disk failure on sdam, disabling device.
+#   2013-03-11T17:12:18-05:00 snx11001n020 kernel: [4058178.564544] md/raid:md4: Disk failure on sds, disabling device.
+#
+# Note that the above example will generate only 2 emails, one for
+# md/raid1:md136 and another for md/raid:md4.
+#/
+
+# The first time the string is observed, create the "context".  For subsequent
+# occurrences,  if the context already exists, the first rule will be ignored
+# and the second will be executed.  Wait 60 seconds before reporting the
+# errors, so they can be aggregated into one email.
+
+# The "pattern" field is used in both rules even though variables $4 and $5
+# are only referenced in the 2nd rule.  This makes it easier to avoid
+# mistakes when there is a change to the "pattern" field  --  just copy the
+# "pattern" line to the other rule.
+
+type= single
+continue= takenext
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*(md/raid.+):\sDisk\sfailure\son\s(.+?),\sdisabling\sdevice
+context= !DISK_FAILURE_$2$3
+desc= Disc failure %{fs}$2$3
+action= create DISK_FAILURE_$2$3 60 ( lcall %df_count $2$3 -> ( sub { return $DISK_FAILURE_count{$_[0]}; } ) ; if %df_count (report _THIS %cmd "%{subject}$2 $3: %df_count Disk(s) failure(s)" %list)) ;\
+        lcall %df_count $2$3 -> ( sub { $DISK_FAILURE_count{$_[0]} = 0; } ) ;\
+        add DISK_FAILURE_$2$3 System:      %site %host, %mf ;\
+        add DISK_FAILURE_$2$3 Filesystem:  %{fs}$2 ;\
+        add DISK_FAILURE_$2$3 Time:      $1 %Tmsg ;\
+        add DISK_FAILURE_$2$3 %t  --  %tmsg2 ;\
+        add DISK_FAILURE_$2$3 %{rule_info}disk_failure.sr ;\
+        add DISK_FAILURE_$2$3 %{N} ;\
+        add DISK_FAILURE_$2$3 From log file $+{_inputsrc}:%{N} ;\
+        add DISK_FAILURE_$2$3 %{N}
+## Removed as the data is not yet in the logs to create a case
+## 	shellcmd /root/snx_sec/bin/open-disk-failure-case.sh -s %{fs}$2 -n $3
+
+type= SingleWithSuppress
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*(md/raid.+):\sDisk\sfailure\son\s(.+?),\sdisabling\sdevice
+context= DISK_FAILURE_$2$3
+desc= Disc failure %{fs}$2$3 $4 $5
+action= add DISK_FAILURE_$2$3 $0 ;\
+        lcall %df_count $2$3 -> ( sub { ++$DISK_FAILURE_count{$_[0]}; } )
+window= 60

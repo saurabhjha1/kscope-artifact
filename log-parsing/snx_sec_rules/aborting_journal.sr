@@ -1,0 +1,80 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports journal aborts. Up to one email is sent every
+# minute, so errors can accumulate.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Unhandled error code
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Unhandled error code
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] CDB: Write(10): 2a 00 02 00 15 91 00 00 10 00
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] CDB: Write(10): 2a 00 02 00 15 91 00 00 10 00
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: end_request: I/O error, dev sda, sector 33559953
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: end_request: I/O error, dev sda, sector 33559953
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: Aborting journal on device sda2-8.
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: Aborting journal on device sda2-8.
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Unhandled error code
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Unhandled error code
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] Result: hostbyte=DID_BAD_TARGET driverbyte=DRIVER_OK
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] CDB: Write(10): 2a 00 02 00 15 59 00 00 08 00
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: sd 0:0:0:0: [sda] CDB: Write(10): 2a 00 02 00 15 59 00 00 08 00
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: end_request: I/O error, dev sda, sector 33559897
+# 2018-03-13T14:05:53-05:00 snx11003n153 kernel: end_request: I/O error, dev sda, sector 33559897
+#
+#
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !ABORT_JOURNAL]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: Aborting journal on device
+desc= Abort Journal
+action= create ABORT_JOURNAL 60 (lcall %o -> ( sub { return $ABORT_JOURNAL_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o Aborting journal on device" %list,%list_page)) ;\
+        lcall %o -> ( sub { $ABORT_JOURNAL_count = 0; } ) ;\
+        add ABORT_JOURNAL System:      %site %host, %mf ;\
+        add ABORT_JOURNAL Filesystem:  all ;\
+        add ABORT_JOURNAL Event:       Abort Journal (s). ;\
+        add ABORT_JOURNAL Time:      $1 %Tmsg ;\
+        add ABORT_JOURNAL %t  --  %tmsg2 ;\
+        add ABORT_JOURNAL %{rule_info}aborting_journal.sr ;\
+        if %urlsr ( add ABORT_JOURNAL %{urlsr}/aborting_journal.sr.html ) ;\
+        add ABORT_JOURNAL From log file: $+{_inputsrc}%{N} ;\
+        add ABORT_JOURNAL %{N}
+
+# Add a new abort to the list
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && ABORT_JOURNAL]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: Aborting journal on device
+desc= Abort Journal $0
+action= add ABORT_JOURNAL $0 ;\
+        lcall %o -> ( sub { ++$ABORT_JOURNAL_count; } )
+
+# Add the subsequent errors lines. I don't think can be correlated
+# with the "attempting device abort", so log all of them.
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && ABORT_JOURNAL]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: sd 0:0:0:0: [sda] Unhandled error code
+desc= Abort Journal $0
+action= add ABORT_JOURNAL $0
+
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && ABORT_JOURNAL]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: end_request: I/O error
+desc= Abort Journal $0
+action= add ABORT_JOURNAL $0

@@ -1,0 +1,39 @@
+
+#/ Begin doc
+
+# You can verify that snx_SEC is monitoring and reporting as it should be by
+# logging into one of the servers, e.g. the n000 server for your system,
+# for example only, snx11002n000, and running:
+#
+#    echo `date` Verifying snx_SEC monitoring | logger
+#
+# or, on the system that is running snx_SEC, you can run:
+#
+#    echo `date` snx11002n000 Verifying snx_SEC monitoring >> \
+#      /var/log/snx_sec/control_and_test_portal
+
+# Note that %list_verify_sec is set in this rule as the recipient of this
+# test email.  %list_verify_sec is defined in snx_SEC_VARIABLES and
+# defaults to crayadm.
+
+# Instance of logged string:
+#
+# 2013-02-12T14:31:17-06:00 snx11002n000 admin: Verifying snx_SEC monitoring
+
+#/ End doc
+
+
+type= Single
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*Verifying\ssnx_SEC\smonitoring
+desc= snx_SEC functionality verification
+action= add VERIFY This email confirms that snx_SEC is successfully monitoring %loghost:%log ;\
+	add VERIFY %N ;\
+	add VERIFY System:      %site %host, %mf ;\
+	add VERIFY Filesystem:  %{fs}$2 ;\
+	add VERIFY Time:      $1  %Tmsg ;\
+	add VERIFY %t  --  %tmsg ;\
+	add VERIFY %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add VERIFY %{rule_info}snx_verify_monitoring.sr ;\
+	report VERIFY %cmd "%{subject}$2: snx_SEC functionality verified" %list_verify_sec ;\
+	delete VERIFY

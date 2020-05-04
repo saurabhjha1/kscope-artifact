@@ -1,0 +1,29 @@
+
+#/ Begin doc
+
+# Report kernel assertions on nodes.
+
+# Instances of logged strings in the syslog file:
+
+# Mar  2 10:07:49 snx11003n301 kernel: [102440.586267] LustreError: 9880:0:(lustre_idl.h:765:lu_fid_eq()) ASSERTION(fid_is_igif(f0) || fid_ver(f0) == 0) failed: [0x5a5a5a5a5a5a5a5a:0x5a5a5a5a:0x5a5a5a5a]
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(ASSERTION)
+desc= assert
+action= add ASSERT 10 minutes  %wmsg ;\
+	add ASSERT System:      %site %host, %mf ;\
+	add ASSERT Filesystem:  %{fs}$2 ;\
+	add ASSERT Event:       $4 ;\
+	add ASSERT Time:      $1  %Tmsg ;\
+	add ASSERT %t  --  %tmsg ;\
+	add ASSERT %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add ASSERT %{rule_info}snx_assertion.sr ;\
+	add ASSERT %note ;\
+	report ASSERT %cmd "%{subject}$2: $4 $3" %list ;\
+	delete ASSERT
+window= 600

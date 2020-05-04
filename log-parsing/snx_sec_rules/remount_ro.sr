@@ -1,0 +1,44 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports when a filesystem is remounted read-only
+#
+# Origin
+# ~~~~~~
+# **/var/log/messages**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Nov 23 02:02:13 snx11003n045 kernel: [2365311.026992] EXT4-fs (sdn2): Remounting filesystem read-only
+#   Dec 17 23:31:08 snx11003n228 kernel: [279954.594040] EXT4-fs (sdcg2): Remounting filesystem read-only
+#   Dec 19 19:56:20 snx11003n142 kernel: [439990.281046] EXT4-fs (sdcg2): Remounting filesystem read-only
+#/
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !REMOUNT_RO]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: .* \(([^(]+)\): Remounting filesystem read-only
+desc= Remounting filesystem read-only
+action= create REMOUNT_RO 60 (lcall %o -> (sub { $REMOUNT_RO_count; }) ; if %o (report _THIS %cmd "%{subject}: Remounting %o filesystem(s) read-only" %list)) ;\
+        lcall %o -> ( sub { $REMOUNT_RO_count = 0; } ) ;\
+        add REMOUNT_RO System:      %site %host, %mf ;\
+        add REMOUNT_RO Filesystem:  %{fs} ;\
+        add REMOUNT_RO Event:       Remounting filesystem read-only. ;\
+        add REMOUNT_RO Time:      $1  %Tmsg ;\
+        add REMOUNT_RO %t  --  %tmsg2 ;\
+        add REMOUNT_RO %{rule_info}remount_ro.sr ;\
+        if %urlsr ( add REMOUNT_RO %{urlsr}/remount_ro.sr.html ) ;\
+        add REMOUNT_RO %{N} ;\
+        add REMOUNT_RO From log file: $+{_inputsrc}%{N} ;\
+        add REMOUNT_RO %{N}
+
+type= Single
+context = [SYSLOG_LOG && REMOUNT_RO]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: .* \(([^(]+)\): Remounting filesystem read-only
+desc= Remounting filesystem read-only %{fs}$2$3 $4
+action= add REMOUNT_RO $0 ;\
+        lcall %o -> ( sub { ++$REMOUNT_RO_count; } )

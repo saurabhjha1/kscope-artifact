@@ -1,0 +1,22 @@
+#
+# Instances of logged strings:
+#
+
+# Mar  7 19:49:29 snxs4n000 kernel: [2021831.194035] Lustre: mdd_obd-snxs4-MDT0000: shutting down for failover; client state will be preserved.
+
+type= SingleWithSuppress
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) .*(shutting down for failover)
+desc= failover
+action= add FAILOVER 10 minutes %wmsg ;\
+	add FAILOVER System:      %site %host, %mf ;\
+	add FAILOVER Filesystem:  %{fs}$2 ;\ 
+	add FAILOVER Event:       $4 ;\
+	add FAILOVER Time:      $1 Tmsg ;\
+	add FAILOVER %t  --  %tmsg ;\
+	add FAILOVER %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add FAILOVER %{rule_info}snx_failover.sr ;\
+	add FAILOVER %note ;\
+	report FAILOVER %cmd "%{subject}$2: $4 %{fs}$2$3" %list ;\
+	delete FAILOVER
+window= 600

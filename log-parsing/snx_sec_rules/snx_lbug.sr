@@ -1,0 +1,30 @@
+
+#/ Begin doc
+
+# Report Lustre LBUG events.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-04-24T09:17:02-05:00 snx11002n032 kernel: [3425121.690028] LustreError: 34340:0:(recov_thread.c:467:llog_recov_thread_stop()) LBUG
+
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(LBUG)
+desc= lbug
+action= add LBUG 10 minutes %wmsg ;\
+	add LBUG System:      %site %host, %mf ;\
+	add LBUG Filesystem:  %{fs}$2 ;\
+	add LBUG Event:       $3 ;\
+	add LBUG Time:      $1  %Tmsg ;\
+	add LBUG %t  --  %tmsg ;\
+	add LBUG %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add LBUG %{rule_info}snx_lbug.sr ;\
+	add LBUG %note ;\
+	report LBUG %cmd "%{subject}$2: $4 %{fs}$2$3" %list ;\
+	delete LBUG
+window= 600

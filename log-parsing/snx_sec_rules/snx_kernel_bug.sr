@@ -1,0 +1,29 @@
+
+#/ Begin doc
+
+# Report kernel bugs.
+
+# Instances of logged strings in the syslog file:
+
+# Mar 22 15:41:22 bwmgs snxs4n001 kernel: [  922.090156] kernel BUG at fs/jbd2/transaction.c:1033!
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(kernel\sBUG)
+desc= Kernel BUG
+action= add KERNEL_BUG 10 minutes %wmsg ;\
+	add KERNEL_BUG System:     %site %host, %mf ;\
+	add KERNEL_BUG Fileystem:  %{fs}$2$3 ;\
+	add KERNEL_BUG Event:      $4 ;\
+	add KERNEL_BUG Time:      $1 %Tmsg in logged string ;\
+	add KERNEL_BUG %t  --  %tmsg ;\
+	add KERNEL_BUG %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add KERNEL_BUG %{rule_info}snx_kernel_bug.sr ;\
+	add KERNEL_BUG %note ;\
+	report KERNEL_BUG %cmd "%{subject}$2: $4 "%{fs}$2$3 %list ;\
+	delete KERNEL_BUG
+window= 600

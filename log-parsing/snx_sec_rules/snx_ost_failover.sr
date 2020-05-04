@@ -1,0 +1,25 @@
+#
+# This rule is for ost failover, rather than mds failover.
+#
+# Instances of logged strings:
+# (from the mgs, snxs4n000)
+# [root@snxs4n000 log]# grep -i fail messages-20120508_snxs4n021|grep -i over
+#
+# May  7 19:42:17 snxs4n021 kernel: [2867964.907443] Lustre: Failing over snxs4-OST004f
+
+type= SingleWithSuppress
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) .*(Failing over .*OST.*)
+desc= failover ost
+action= add FAILOVER_OST 10 minutes %wmsg ;\
+	add FAILOVER_OST System:     %site %host, %mf ;\
+	add FAILOVER_OST Fileystem:  %{fs}$2 ;\
+	add FAILOVER_OST Event:      Possible ost oss failover event $4 ;\
+	add FAILOVER_OST Time:      $1  %Tmsg ;\
+	add FAILOVER_OST %t  --  %tmsg ;\
+	add FAILOVER_OST %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add FAILOVER_OST %{rule_info}snx_ost_failover.sr ;\
+	add FAILOVER_OST %note ;\
+	report FAILOVER_OST %cmd "%{subject}$2: Possible ost oss failover event $3 %{fs}$2$3" %list ;\
+	delete FAILOVER_OST
+window= 600

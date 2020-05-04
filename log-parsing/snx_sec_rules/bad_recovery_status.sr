@@ -1,0 +1,52 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+#
+# Reports when the recovery status of an MDS is not COMPLETE. It could
+# be RECOVERING or INACTIVE, or <???>.
+#
+# Origin
+# ~~~~~~
+# **lmmon-aggregated.log**, which was generated from
+# **lmmon-recovery_status.log**, itself recovered from
+# **/proc/fs/lustre/mdt/...**.
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Wed Jan 16 11:29:56 2013: snx11003n003: Recovery status for the MDS is INACTIVE
+#   Fri Mar 15 17:31:16 2013: snx11003n003: Recovery status for the MDS is RECOVERING
+#/
+
+type= single
+continue=takenext
+context = [AGGREGATED_LOG && !BAD_RECOVERY_STATUS]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: snx(\d+)(n\d+): Recovery status for the MDS is (.*)
+desc= Bad recovery status
+action= create BAD_RECOVERY_STATUS 60 ( \
+            lcall %o -> (sub { $BAD_RECOVERY_STATUS_count; }); \
+            if %o (report _THIS %cmd "%{subject}: Unexpected recovery status(es) for %o MDS" %list)) ;\
+        lcall %o -> ( sub { $BAD_RECOVERY_STATUS_count = 0; } ) ;\
+        add BAD_RECOVERY_STATUS System:      %site %host, %mf ;\
+        add BAD_RECOVERY_STATUS Filesystem:  all ;\
+        add BAD_RECOVERY_STATUS Event:       Unexpected MDS recovery status(es). ;\
+        add BAD_RECOVERY_STATUS Time:      $1  %Tmsg ;\
+        add BAD_RECOVERY_STATUS %t  --  %tmsg2 ;\
+        add BAD_RECOVERY_STATUS %{rule_info}bad_recovery_status.sr ;\
+        if %urlsr ( add BAD_RECOVERY_STATUS %{urlsr}/bad_recovery_status.sr.html ) ;\
+        add BAD_RECOVERY_STATUS %{N} ;\
+        add BAD_RECOVERY_STATUS From log file: $+{_inputsrc}%{N} ;\
+        add BAD_RECOVERY_STATUS %{N}
+
+type= SingleWithSuppress
+context = [AGGREGATED_LOG && BAD_RECOVERY_STATUS]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: snx(\d+)(n\d+): Recovery status for the MDS is (.*)
+desc= Bad recovery status %{fs}$2$3 $4
+action= add BAD_RECOVERY_STATUS $0 ;\
+        lcall %o -> ( sub { ++$BAD_RECOVERY_STATUS_count; } )
+window=86400
+
+

@@ -1,0 +1,28 @@
+
+#/ Begin doc
+
+# Instances of logged strings:
+
+# Jan 18 19:09:31 snx11025n007 SESMON: ERROR: Disk not found by WWN: 5000cca01abb3ab6
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(Disk\snot\sfound\sby\sWWN:.*)
+desc= disk not found
+action= add DISK_NOT_FOUND 10 minutes %wmsg ;\
+	add DISK_NOT_FOUND System:      %site %host, %mf ;\
+	add DISK_NOT_FOUND Filesystem:  %{fs}$2 ;\
+	add DISK_NOT_FOUND Event:       $4 ;\
+	add DISK_NOT_FOUND Time:      $1  %Tmsg ;\
+	add DISK_NOT_FOUND %t  --  %tmsg ;\
+	add DISK_NOT_FOUND %N ;\
+	add DISK_NOT_FOUND %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add DISK_NOT_FOUND %{rule_info}snx_disk_not_found.sr ;\
+	add DISK_NOT_FOUND %N ;\
+	report DISK_NOT_FOUND %cmd "%{subject}$2: $3: $4" %list ;\
+	delete DISK_NOT_FOUND
+window= 600

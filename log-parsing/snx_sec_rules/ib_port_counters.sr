@@ -1,0 +1,90 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Daily report of IB port error counters. Errors are accumulated per
+# type of error/per port, and only ports with errors are reported, all
+# in one email.
+#
+# Origin
+# ~~~~~~
+# From **ibsanity2.out**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   ie03[1] (to core-leaf05[8]): port has error counter -- SymbolErrorCounter = 462
+#   s3r030ib1[5] (to snx11003n358[1]): port has error counter -- PortRcvErrors = 2
+#   s3r030ib1[5] (to snx11003n358[1]): port has error counter -- SymbolErrorCounter = 65535
+#   core-leaf12[32] (to core-spine07[24]): port has error counter -- PortRcvRemotePhysicalErrors = 3
+#   core-leaf12[34] (to core-spine08[24]): port has error counter -- PortRcvRemotePhysicalErrors = 3
+#
+# Example of report
+# ~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Summary of IB counters errors:
+#   ==============================
+#
+#   -- SymbolErrorCounter: --
+#
+#     bwbackup [1]  = 53
+#     core-leaf01 [10]  = 11
+#     core-leaf01 [13]  = 60
+#     core-leaf01 [4]  = 13
+#     core-leaf02 [11]  = 1
+#
+#
+#   -- PortRcvErrors: --
+#
+#     core-leaf01 [10]  = 6
+#     core-leaf01 [13]  = 35
+#     core-leaf01 [18]  = 1
+#     core-leaf01 [22]  = 14
+#     core-leaf01 [4]  = 10
+#     core-leaf02 [12]  = 1
+#/
+
+# Store all errors in perl hashes. The hash is indexed by
+#   { error name } { node name } { port number }
+# and gives the number of accumulated errors.
+type= single
+context= [IB_SANITY_LOG]
+ptype= RegExp
+pattern= (.*)\[([0-9]+)\] \(to .*: port has error counter -- ([A-Za-z]+) = ([0-9]+)
+desc= port counter error
+action= add PORT_COUNTER_ERRORS $0 ;\
+        lcall %o $3 $1 $2 $4 -> ( sub { $port_counter_errors{ $_[0] }{ $_[1] }{ $_[2] } += $_[3]; } )
+
+
+# Send daily report. Build a perl string with the error report, and send an email if it's not empty.
+type=Calendar
+time=43 13 * * * *
+desc=IB Daily summary
+action=lcall %o -> ( sub { my $sum_all = ""; \
+                           if (%port_counter_errors) { \
+                             $sum_all .= "\n\n\nSummary of IB counters errors:\n" ; \
+                             $sum_all .= "==============================\n\n"; \
+                             foreach my $error ("SymbolErrorCounter", "PortRcvErrors", "LinkDownedCounter", "PortRcvRemotePhysicalErrors  ", "PortXmitDiscards", "PortXmitConstraintErrors", "LocalLinkIntegrityErrors", "PortRcvConstraintErrors", "ExcessiveBufferOverrunErrors", "LinkErrorRecoveryCounter", "VL15Dropped", "PortRcvSwitchRelayErrors") { \
+                               next if ( not exists $port_counter_errors{$error}); \
+                               $sum_all .= "-- $error: --\n\n"; \
+                               foreach my $node ( sort keys %{$port_counter_errors{$error}} ) { \
+                                 $sum_all .= join("\n", map { "  $node [$_]  = $port_counter_errors{$error}{$node}{$_}" } sort keys %{$port_counter_errors{$error}{$node}}); \
+                                 $sum_all .= "\n"; \
+                               } \
+                               $sum_all .= "\n\n"; \
+                             } \
+                             %port_counter_errors = (); \
+                           } \
+                           if ($sum_all) { return $sum_all; } else { return undef; } \
+                           } ) ;\
+       if %o (add PORT_COUNTERS_SUMMARY System:      %site %host ;\
+              add PORT_COUNTERS_SUMMARY Filesystem:  all ;\
+              add PORT_COUNTERS_SUMMARY Event:       Daily IB port counter errors summary. ;\
+              add PORT_COUNTERS_SUMMARY %t  --  Date of report generation ;\
+              add PORT_COUNTERS_SUMMARY %o ;\
+              add PORT_COUNTERS_SUMMARY %{rule_info}ib_port_counters.sr ;\
+              if %urlsr ( add PORT_COUNTERS_SUMMARY %{urlsr}/ib_port_counters.sr.html ) ;\
+              report PORT_COUNTERS_SUMMARY %cmd "%{subject}: Daily IB port counter errors summary" %list ;\
+              delete PORT_COUNTERS_SUMMARY ;\
+       )

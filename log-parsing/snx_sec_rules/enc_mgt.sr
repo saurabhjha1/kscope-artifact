@@ -1,0 +1,133 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports the PSUs and fans in enclosure that are in some error
+# state. The first time a failure happens, it will be reported, with
+# up to 1 email per 2 minutes and errors are aggregated; then it will
+# appear in the daily summary until the problem is fixed. The problem
+# is considered fixed if it doesn't appear again for a day.
+#
+# Origin
+# ~~~~~~
+# **syslog.log**.
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Fan (partial string):
+# ::
+#
+#   ENC_MGT; ... Setting fans to max - cause : Critical zone failed
+#   ENC_MGT; ... faults indicate loss of local fan power
+#
+# Power supply (partial string):
+# ::
+#
+#   ENC_MGT; ... HAL indicates DC OVER CURRENT fault on PCM
+#   ENC_MGT; ... HAL indicates PSU AC FAILURE fault on PCM
+#   ENC_MGT; ... HAL indicates PSU DC FAILURE fault on PCM
+#   ENC_MGT; ... HAL indicates PSU FAILURE fault on PCM
+#   ENC_MGT; ... HAL indicates PSU TURNED OFF fault on PCM
+#   ENC_MGT; ... DC OVER CURRENT Fault Detected
+#   ENC_MGT; ... PCM FAILURE Fault Detected
+#   ENC_MGT; ... TURNED OFF Fault Detected
+#   ENC_MGT; ... AC FAILURE Fault Detected
+#   ENC_MGT; ... DC FAILURE Fault Detected
+#   ENC_MGT; ... faults indicate loss of power
+#   ENC_MGT; ... Setting FAIL MIN REDUNDANT alarm for PCM
+#   ENC_MGT; ... Setting FAIL NON REDUNDANT alarm for PCM
+#   ENC_MGT; ... Setting AC MISSING MIN REDUNDANT alarm for PCM
+#   ENC_MGT; ... Setting AC MISSING NON REDUNDANT alarm for PCM
+#
+# Real example:
+#
+# NEO 1.2::
+#
+#   2013-04-08T02:49:28-05:00 snx11003n156 GEM: INFO: /dev/sg0 SHX0978906G07NK: 2013-04-08 07:48:30.710; ENC_MGT; power_manager; 02; HAL indicates PSU TURNED OFF fault on PCM 2 (300000)
+#
+# NEO 1.3.1::
+#
+#   2014-12-10T19:37:50-06:00 snx11003n133 ses_monitor.py: /dev/sg4 SHX0978906G0718: 2014-12-10 19:37:36.905; ENC_MGT; power_manager; 02; HAL indicates DC OVER CURRENT fault on PCM 1 (2380000)
+#
+#/
+
+# To aggregate the errors in an email, create ENC_MGT_PSU if it doesn't
+# exist, with a 60 seconds lifetime. If it already exists, just append
+# the message line.  If matched, pattern2 will clear the error.
+#
+# If the message doesn't appear again for 1 hour, then the error will be
+# cleared.
+type=SingleWith2Thresholds
+context = [SYSLOG_LOG]
+ptype=RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).* ENC_MGT;.* (HAL indicates DC OVER CURRENT fault on PCM|HAL indicates PSU AC FAILURE fault on PCM|HAL indicates PSU DC FAILURE fault on PCM|HAL indicates PSU FAILURE fault on PCM|HAL indicates PSU TURNED OFF fault on PCM|PCM \d+ DC OVER CURRENT Fault Detected|PCM \d+ PCM FAILURE Fault Detected|PCM \d+ TURNED OFF Fault Detected|PCM \d+ AC FAILURE Fault Detected|PCM \d+ DC FAILURE Fault Detected|PCM \d+ faults indicate loss of power|Setting FAIL MIN REDUNDANT alarm for PCM|Setting FAIL NON REDUNDANT alarm for PCM|Setting AC MISSING MIN REDUNDANT alarm for PCM|Setting AC MISSING NON REDUNDANT alarm for PCM)(.*)
+desc= enc mgt psu error $2 $3 $4 $5
+action= exists %x ENC_MGT_PSU ;\
+        if %x ( none ) \
+        else ( create ENC_MGT_PSU 120 (lcall %o -> (sub { join(", ", sort keys %ENC_MGT_PSU_nodes); }); \
+                                     prepend ENC_MGT_PSU System:      %site %host, %mf \
+                                                         %{N}Filesystem:  all \
+                                                         %{N}Event:       PSU enclosure error(s) \
+                                                         %{N}Time:      $1 %Tmsg \
+                                                         %{N}%t  --  %tmsg \
+                                                         %{N}PSU enclosure error(s) for node(s): %o \
+                                                         %{N} \
+                                                         %{N} ;\
+                                     add ENC_MGT_PSU %{N} ;\
+                                     add ENC_MGT_PSU %{rule_info}enc_mgt.sr ;\
+                                     if %urlsr ( add ENC_MGT_PSU %{urlsr}/enc_mgt.sr.html ) ;\
+                                     add ENC_MGT_PSU %{N} ;\
+                                     add ENC_MGT_PSU From log file: syslog.log ;\
+                                     lcall %o -> (sub { $ENC_MGT_PSU_count; }) ;\
+                                     report _THIS %cmd "%{subject}: %o PSU enclosure error(s) (NEW)" %list) ;\
+               lcall %o -> ( sub { $ENC_MGT_PSU_count = 0; %ENC_MGT_PSU_nodes = (); } ) ;\
+        ) ;\
+        add ENC_MGT_PSU $0 ;\
+        lcall %o $2 $3 $4 $5 $0 -> ( sub { ++$ENC_MGT_PSU_count; \
+                                           $enc_mgt_psu{$_[0] . $_[1] . $_[2] . $_[3]} = $_[4]; \
+                                           $ENC_MGT_PSU_nodes{$_[0] . $_[1]} = 'x'; \
+                                           return undef; } )
+window=1
+thresh=1
+desc2= enc mgt psu good $2 $3 $4 $5
+action2= lcall %o $2 $3 $4 $5 -> ( sub { --$ENC_MGT_PSU_count; delete($enc_mgt_psu{$_[0] . $_[1] . $_[2] . $_[3]}); return undef; } )
+window2= 86400
+thresh2=0
+
+
+
+type=SingleWith2Thresholds
+context = [SYSLOG_LOG]
+ptype=RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).* ENC_MGT; .*; (Setting fans to max - cause : Critical zone failed|faults indicate loss of local fan power)
+desc= enc mgt fan error $2 $3 $4 $5
+action= exists %x ENC_MGT_FAN ;\
+        if %x ( none ) \
+        else ( create ENC_MGT_FAN 120 (lcall %o -> (sub { join(", ", sort keys %ENC_MGT_FAN_nodes); }); \
+                                     prepend ENC_MGT_FAN System:      %site %host, %mf \
+                                                         %{N}Filesystem:  all \
+                                                         %{N}Event:       Fan enclosure error(s) \
+                                                         %{N}Time:      $1 %Tmsg \
+                                                         %{N}%t  --  %tmsg \
+                                                         %{N}FAN enclosure error(s) for node(s): %o \
+                                                         %{N} \
+                                                         %{N} ;\
+                                     add ENC_MGT_FAN %{N} ;\
+                                     add ENC_MGT_FAN %{rule_info}enc_mgt.sr ;\
+                                     if %urlsr ( add ENC_MGT_FAN %{urlsr}/enc_mgt.sr.html ) ;\
+                                     add ENC_MGT_FAN %{N} ;\
+                                     add ENC_MGT_FAN From log file: syslog.log ;\
+                                     lcall %o -> (sub { $ENC_MGT_FAN_count; }) ;\
+                                     report _THIS %cmd "%{subject}: %o Fan enclosure error(s) (NEW)" %list) ;\
+               lcall %o -> ( sub { $ENC_MGT_FAN_count = 0; %ENC_MGT_FAN_nodes = (); } ) ;\
+        ) ;\
+        add ENC_MGT_FAN $0 ;\
+        lcall %o $2 $3 $4 $5 $0 -> ( sub { ++$ENC_MGT_FAN_count; \
+                                     $enc_mgt_fan{$_[0] . $_[1] . $_[2] . $_[3]} = $_[4]; \
+                                     $ENC_MGT_FAN_nodes{$_[0] . $_[1]} = 'x'; \
+                                     return undef; } )
+window=1
+thresh=1
+desc2= enc mgt fan good $2 $3 $4 $5
+action2= lcall %o $2 $3 $4 $5 -> ( sub { --$ENC_MGT_FAN_count; delete($enc_mgt_fan{$_[0] . $_[1] . $_[2] . $_[3]}); return undef; } )
+window2= 86400
+thresh2=0

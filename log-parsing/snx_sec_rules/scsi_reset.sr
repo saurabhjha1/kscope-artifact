@@ -1,0 +1,62 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of SCSI resets. Up to one email is sent every
+# minute, so errors can accumulate.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#  2014-03-03T20:22:39-06:00 snx11003n274 kernel: [1840585.913749] scsi target0:0:43: attempting device reset! scmd(ffff8807ec586780)
+#  2014-03-03T20:22:39-06:00 snx11003n274 kernel: [1840585.929061] scsi target0:0:43: handle(0x0039), sas_address(0x5000cca01b4722a2), phy(27)
+#  2014-03-03T20:22:39-06:00 snx11003n274 kernel: [1840585.937379] scsi target0:0:43: enclosure_logical_id(0x50050cc10c4003c4), slot(73)
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !SCSI_RESET]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel:.+ attempting device reset!
+desc= scsi reset
+action= create SCSI_RESET 60 (lcall %o -> ( sub { return $SCSI_RESET_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o attempted scsi device reset(s)" %list,%list_page)) ;\
+        lcall %o -> ( sub { $SCSI_RESET_count = 0; } ) ;\
+        add SCSI_RESET System:      %site %host, %mf ;\
+        add SCSI_RESET Filesystem:  all ;\
+        add SCSI_RESET Event:       SCSI reset(s). ;\
+        add SCSI_RESET Time:      $1 %Tmsg ;\
+        add SCSI_RESET %t  --  %tmsg2 ;\
+        add SCSI_RESET %{rule_info}scsi_reset.sr ;\
+        if %urlsr ( add SCSI_RESET %{urlsr}/scsi_reset.sr.html ) ;\
+        add SCSI_RESET From log file: $+{_inputsrc}%{N} ;\
+        add SCSI_RESET %{N}
+
+# Add a new reset to the list
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_RESET]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel:.+ attempting device reset!
+desc= scsi reset $0
+action= add SCSI_RESET $0 ;\
+        lcall %o -> ( sub { ++$SCSI_RESET_count; } )
+
+# Add the subsequent errors lines. I don't think can be correlated
+# with the "attempting device reset", so log all of them.
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_RESET]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel:.+ scsi target.+: handle.+ sas_address.+, phy
+desc= scsi reset $0
+action= add SCSI_RESET $0
+
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_RESET]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel:.+ scsi target.+: enclosure_logical_id.+, slot
+desc= scsi reset $0
+action= add SCSI_RESET $0

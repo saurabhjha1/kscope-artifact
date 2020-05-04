@@ -1,0 +1,51 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of SCSI command aborts. Up to one email is sent
+# every minute, so errors can accumulate. Each error will be reported
+# once per hour until the underlying cause is fixed.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Sep 18 17:57:03 snx11003n347 kernel: scsi_eh_6: aborting cmd:0xffff8804f145dc80
+#
+# Corrective action
+# ~~~~~~~~~~~~~~~~~
+# A drive appears to be failing; it should be replaced.
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !SCSI_ABORT2]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: scsi_eh_\d+: aborting cmd
+desc= scsi cmd abort
+#action= create SCSI_ABORT2 60 (lcall %o -> ( sub { return $SCSI_ABORT2_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o aborting scsi command" %list,%list_page)) ;\
+action= create SCSI_ABORT2 60 (lcall %o -> ( sub { return $SCSI_ABORT2_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o aborting scsi command" %list)) ;\
+        lcall %o -> ( sub { $SCSI_ABORT2_count = 0; } ) ;\
+        add SCSI_ABORT2 System:      %site %host, %mf ;\
+        add SCSI_ABORT2 Filesystem:  all ;\
+        add SCSI_ABORT2 Event:       SCSI command abort(s). ;\
+        add SCSI_ABORT2 Time:      $1 %Tmsg ;\
+        add SCSI_ABORT2 %t  --  %tmsg2 ;\
+        add SCSI_ABORT2 %{rule_info}scsi_abort2.sr ;\
+        if %urlsr ( add SCSI_ABORT2 %{urlsr}/scsi_abort2.sr.html ) ;\
+        add SCSI_ABORT2 From log file: $+{_inputsrc}%{N} ;\
+        add SCSI_ABORT2 %{N}
+
+# Add a new abort to the list
+type= SingleWithSuppress
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_ABORT2]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: scsi_eh_(\d+): aborting cmd
+desc= scsi cmd abort $1 $2 $3
+action= add SCSI_ABORT2 $0 ;\
+        lcall %o -> ( sub { ++$SCSI_ABORT2_count; } )
+window=3600

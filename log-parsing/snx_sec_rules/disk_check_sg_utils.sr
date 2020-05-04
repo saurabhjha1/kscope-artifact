@@ -1,0 +1,66 @@
+
+#/ Begin doc
+
+# Report: Over limits/thresholds based on Level 3 guidance:
+#         Uncorrected reads/writes over: 100
+#         GList over: 1000
+#
+# Our limits (perhaps add later if needed):
+#         await over 1000 && Delayed reads/writes > 20,000 repeated
+#             over time while not in raid recover/raid check
+#         Noticed one drive with VERY high non-medium errors also
+#
+# Instances are aggregated over a five-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+#
+
+# Instances of logged strings in the syslog file:
+#    * This may change with having slot numbers and perhaps note Device Name (as it changes between hosts)
+# 2018-01-15T17:36:54-06:00 snx11000n005 disk_check: sdad, Z1P0KXHD0000C21211HZ, 0, 0, 0, 0, 0, 4165547393, 0,22, 0
+# 2018-01-15T20:06:15-06:00 snx11000n004 disk_check: sdb, Z1P0KXHD0000C21211HZ, 0, 0, 0, 0, 0, 4165589814, 0,22, 0
+# 2018-01-15T20:05:47-06:00 snx11000n004 disk_check: sdaa, Z1P0EWAG0000C2117Y24, 0, 0, 0, 0, 0, 3519142456, 0,28, 0
+# 2018-01-15T17:37:46-06:00 snx11000n005 disk_check: sdbx, Z1P0HRJM0000C2115E4F, 0, 0, 0, 1, 0, 3541412204, 9,28, 0
+# 2018-01-15T20:06:10-06:00 snx11000n004 disk_check: sdav, Z1P0HRJM0000C2115E4F, 0, 0, 0, 1, 0, 3546782772, 9,28, 0
+
+#/ End doc
+
+# There are two pairs of rules here.  The first pair is for disks
+# "GLists - Growth Defect Lists", the 2nd for disks "Uncorrected".
+
+# Tue Jan 16 00:21:10 2018: Reading configuration from /root/snx_sec/distributed_rules/disk_check_sg_utils.sr
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'window' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'window2' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'action2' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'desc2' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'thresh' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 31: Keyword 'thresh2' missing (needed for SINGLEWITH2THRESHOLDS rule)
+# Tue Jan 16 00:21:11 2018: Rule in /root/snx_sec/distributed_rules/disk_check_sg_utils.sr at line 49: Keyword 'type' missing
+# Tue Jan 16 00:21:11 2018: 1 rules loaded from /root/snx_sec/distributed_rules/disk_check_sg_utils.sr
+
+type= SingleWithSuppress
+continue= TakeNext
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdisk_check:\s(sd.*),\s(.*),.*(?!(Exceeded:)).*
+context= !SG_DISK_DATA
+desc= disk $4
+action= lcall %count_disk_data -> ( sub { $drive_check_data = 0; } ) ;\
+	add SG_DISK_DATA System:      %site %host, %mf ;\
+	add SG_DISK_DATA Filesystem:  %{fs}$2 ;\
+	add SG_DISK_DATA Event:       Disk drive $4 $5 ;\
+	add SG_DISK_DATA Time:      $1  %Tmsg ;\
+	add SG_DISK_DATA %t  --  %tmsg ;\
+	add SG_DISK_DATA Log file:%{N}---------%{N}%{host}:$+{_inputsrc}%{N} ;\
+	add SG_DISK_DATA %{rule_info}disk_check_sg_utils.sr ;\
+	add SG_DISK_DATA %N ;\
+	add SG_DISK_DATA Summary of disk $4 events:%{N}------------------------------- ;
+window= 300
+# thresh= 1
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdisk_check:\s(sd.*),.*(?!(Exceeded:)).*
+desc= count Disk with new sg_utils data
+action= lcall %count_disk_data -> ( sub { ++$drive_check_data; } ) ;\
+	add SG_DISK_DATA $0

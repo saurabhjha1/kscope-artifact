@@ -1,0 +1,48 @@
+
+#/ Begin doc
+
+# Report threads that have timed out.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-03-04T10:18:11-06:00 snx11003n338 kernel: [2999298.914523] Lustre: Service thread pid 71749 was inactive for 600.00s. The thread might be hung, or it might only be slow and will resume later. Dumping the stack trace for debugging purposes
+
+#/ End doc
+
+
+type= SingleWith2Thresholds
+continue= Takenext
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*thread\smight\sbe\shung,\sor\sit\smight\sonly\sbe\sslow
+desc= Inactive thread
+action= lcall %inactive_thread_count -> ( sub { $inactive_thread_counter = 0; } ) ;\
+	add INACTIVE_THREAD System:      %site %host, %mf ;\
+	add INACTIVE_THREAD Filesystem:  %{fs}$2 ;\
+	add INACTIVE_THREAD Event:       New slow or hung thread events with no new such events over the past two minutes, stack traces dumped. ;\
+	add INACTIVE_THREAD Time:      $1  %Tmsg ;\
+	add INACTIVE_THREAD %t  --  %tmsg ;\
+	add INACTIVE_THREAD %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add INACTIVE_THREAD %{rule_info}snx_inactive_thread.sr ;\
+	add INACTIVE_THREAD %N ;\
+	add INACTIVE_THREAD Summary of slow or hung threads: ;\
+	add INACTIVE_THREAD --------------------------------
+window= 1
+thresh= 1
+desc2= Report summary inactive thread events
+action2= report INACTIVE_THREAD %cmd "%{subject}: %inactive_thread_count slow or hung threads.  ($1)" %list,%list_page ;\
+	 delete INACTIVE_THREAD
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*thread\smight\sbe\shung,\sor\sit\smight\sonly\sbe\sslow
+desc= Count slow or hung threads
+action= lcall %inactive_thread_count -> ( sub { ++$inactive_thread_counter; } ) ;\
+	add INACTIVE_THREAD snx$2$3  $1

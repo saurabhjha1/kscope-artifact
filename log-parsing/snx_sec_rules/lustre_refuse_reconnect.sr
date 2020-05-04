@@ -1,0 +1,60 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports when a reconnection cannot be established. All messages are
+# aggregated in one email per 30 minutes.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# Strings creating the error. Note that the line number from the C
+# source is important in the *Skipped ...* message.
+# ::
+#
+#   2013-04-09T07:56:34-05:00 snx11003n080 kernel: [6526406.719758] Lustre: 129298:0:(ldlm_lib.c:916:target_handle_connect()) snx11003-OST0130: refuse reconnection from af5d9651-3b96-1883-ca95-962dd30b10d3@10.10.108.20@o2ib3 to 0xffff8802f496e400/2
+#   2013-04-09T07:56:34-05:00 snx11003n080 kernel: [6526406.737283] Lustre: 129298:0:(ldlm_lib.c:916:target_handle_connect()) Skipped 282 previous similar messages
+#/
+
+# To aggregate email, create REFUSE_RECO if it doesn't exist, with a
+# 60 seconds lifetime. If it already exists, just append the message line.
+# If matched, pattern2 will clear the error.
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !REFUSE_RECO]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*:\(ldlm_lib.c:916:target_handle_connect\(\)\) (snx\d+-[\w]+): refuse reconnection from (.*) to 0x
+desc= refuse reco
+action= create REFUSE_RECO 1800 (lcall %o -> (sub { $REFUSE_RECO_count; }) ; if %o (report _THIS %cmd "%{subject}: Lustre refused %o reconnection(s)" %list)) ;\
+        lcall %o -> ( sub { $REFUSE_RECO_count = 0; } ) ;\
+        add REFUSE_RECO 30 minutes %wmsg ;\
+        add REFUSE_RECO System:      %site %host, %mf ;\
+        add REFUSE_RECO Filesystem:  all ;\
+        add REFUSE_RECO Event:       Lustre connection refused. ;\
+        add REFUSE_RECO Time:      $1 %Tmsg ;\
+        add REFUSE_RECO %t  --  %tmsg2 ;\
+        add REFUSE_RECO %{rule_info}lustre_refuse_reconnect.sr ;\
+        if %urlsr ( add REFUSE_RECO %{urlsr}/lustre_refuse_reconnect.sr.html ) ;\
+        add REFUSE_RECO %note ;\
+        add REFUSE_RECO %{N} ;\
+        add REFUSE_RECO From log file: $+{_inputsrc}%{N} ;\
+        add REFUSE_RECO %{N}
+
+type= Single
+context = [SYSLOG_LOG && REFUSE_RECO]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*:\(ldlm_lib.c:916:target_handle_connect\(\)\) (snx\d+-[\w]+): refuse reconnection from (.*) to 0x
+desc= refuse reco $2$3 $4 $5
+action= add REFUSE_RECO $0 ;\
+        lcall %o -> ( sub { ++$REFUSE_RECO_count; } )
+
+type= Single
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*:\(ldlm_lib.c:916:target_handle_connect\(\)\) Skipped (\d+) previous similar messages
+desc= refuse reco $2$3 $4
+context = [SYSLOG_LOG && REFUSE_RECO]
+action= add REFUSE_RECO $0 ;\
+        lcall %o $4 -> ( sub { $REFUSE_RECO_count += $_[0]; } )

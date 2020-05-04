@@ -1,0 +1,30 @@
+
+#/ Begin doc
+
+# Report raid resyncs.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-02-19T17:11:16-06:00 snx11003n000 kernel: [17302.681479] md: md127: resync done.
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*(md\d+)\:\s(resync\sdone)
+desc= resync done
+action= add RESYNC_DONE 10 minutes %wmsg ;\
+	add RESYNC_DONE System:      %site %host, %mf ;\
+	add RESYNC_DONE Filesystem:  %{fs}$2 ;\
+	add RESYNC_DONE Event:       resync done event ;\
+	add RESYNC_DONE Time:      $1  %Tmsg ;\
+	add RESYNC_DONE %t  --  %tmsg ;\
+	add RESYNC_DONE %N ;\
+	add RESYNC_DONE %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add RESYNC_DONE %{rule_info}snx_raid_resync_done.sr ;\
+	add RESYNC_DONE %N ;\
+	report RESYNC_DONE %cmd "%{subject}$2: $3: $4 $5 " %list ;\
+	delete RESYNC_DONE
+window= 600

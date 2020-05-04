@@ -1,0 +1,49 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports backplane hardware error. All errors are aggregated and only
+# up to one email is sent every minute.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# NEO 1.2::
+#
+#   2013-04-02T13:49:55-05:00 snx11003n195 GEM: INFO: /dev/sg0 SHX0978906G077C: 68+21:34:50.738; IPMI; ipmi_log; 02; BMC;0;#009-0x09:07:6F:00FFFF | CPU Status | Asserted | Specific | IERR
+#
+# NEO 1.3.1::
+#
+#   2014-10-09T20:06:52-05:00 snx11003n356 ses_monitor.py: /dev/sg4 SHX0978906G07KY: 2014-06-01 09:07:39.369; IPMI; ipmi_log; 02; BMC;0;#009-0x09:07:6F:00FFFF | CPU Status | Asserted | Specific | IERR
+#/
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !GEM_IERR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+) .* IPMI; .* \| IERR$
+desc= GEM IERR
+action= create GEM_IERR 60 (lcall %o -> (sub { $GEM_IERR_count; }) ; if %o (report _THIS %cmd "%{subject}: %o GEM IERR" %list)) ;\
+        lcall %o -> ( sub { $GEM_IERR_count = 0; } ) ;\
+        add GEM_IERR System:      %site %host, %mf ;\
+        add GEM_IERR Filesystem:  all ;\
+        add GEM_IERR Event:       GEM IERR. ;\
+        add GEM_IERR Time:      $1 %Tmsg ;\
+        add GEM_IERR %t  --  %tmsg2 ;\
+        add GEM_IERR %{rule_info}gem_error.sr ;\
+        if %urlsr ( add GEM_IERR %{urlsr}/gem_error.sr.html ) ;\
+        add GEM_IERR %{N} ;\
+        add GEM_IERR From log file: $+{_inputsrc}%{N} ;\
+        add GEM_IERR %{N}
+
+type= SingleWithSuppress
+context = [SYSLOG_LOG && GEM_IERR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+) .* IPMI; .* \| IERR$
+desc= GEM IERR on $2$3
+action= add GEM_IERR $0 ;\
+        lcall %o -> ( sub { ++$GEM_IERR_count; } )
+window=86400

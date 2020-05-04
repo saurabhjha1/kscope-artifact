@@ -1,0 +1,48 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Report unexpected IB link speed. Each invalid link speed will be
+# reported once per day. If several errors happen within the same
+# minute, they will be accumulated in the same email. Note that is
+# really 15 minutes, since the ibsanity check run at that interval.
+#
+# Origin
+# ~~~~~~
+# From **ibsanity2.out**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   core-leaf08[7] (to snx11002n003[1]): Invalid link -- expected 4xQDR, got 4xSDR
+#
+#/
+
+type= single
+continue= takenext
+context= [IB_SANITY_LOG && !IB_INVALID_SPEED]
+ptype= RegExp
+pattern= (.+)\[\d+\] \(to (.+)\[\d+\]\): Invalid link --
+desc= ib invalid speed
+action= create IB_INVALID_SPEED 60 (lcall %o -> ( sub { return $IB_INVALID_SPEED_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o Invalid IB link speed" %list)) ;\
+        lcall %o -> ( sub { $IB_INVALID_SPEED_count = 0; } ) ;\
+        add IB_INVALID_SPEED 1 day %wmsg ;\
+        add IB_INVALID_SPEED System:      %site %host, %mf ;\
+        add IB_INVALID_SPEED Filesystem:  %{fs}$2 ;\
+        add IB_INVALID_SPEED Event:       Invalid IB link speed. ;\
+        add IB_INVALID_SPEED Time:        %t ;\
+        add IB_INVALID_SPEED %t  --  %tmsg2 ;\
+        add IB_INVALID_SPEED %{rule_info}ib_errors.sr ;\
+        if %urlsr ( add IB_INVALID_SPEED %{urlsr}/ib_errors.sr.html ) ;\
+        add IB_INVALID_SPEED %{N} ;\
+        add IB_INVALID_SPEED From log file: $+{_inputsrc}%{N} ;\
+        add IB_INVALID_SPEED %{N}
+
+type=SingleWithSuppress
+context= [IB_SANITY_LOG && IB_INVALID_SPEED]
+ptype= RegExp
+pattern= (.+\[\d+\] \(to .+\[\d+\]\)): Invalid link --
+desc= ib invalid speed $1
+action= add IB_INVALID_SPEED $0 ;\
+        lcall %o -> ( sub { ++$IB_INVALID_SPEED_count; } )
+window=86400

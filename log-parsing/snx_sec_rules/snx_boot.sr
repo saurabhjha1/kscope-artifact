@@ -1,0 +1,49 @@
+
+#/ Begin doc
+
+# Report nodes being booted.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-03-03T14:47:51-06:00 snx11001n002 kernel: Command line: initrd=initrd-2.6.32-131.21.1.el6.lustre.3021.x86_64-gedi root=dhcp printk.time=1 panic=30 console=tty0 console=ttyS0,115200n8 crashkernel=256M BOOT_IMAGE=vmlinuz-2.6.32-131.21.1.el6.lustre.3021.x86_64 BOOTIF=01-00-1e-67-39-a4-68
+
+#/ End doc
+
+
+type= SingleWith2Thresholds
+continue= Takenext
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel\:\sCommand\sline\:\sinitrd
+desc= node booting
+action= lcall %boot_count -> ( sub { $boot_counter = 0; } ) ;\
+	eval %logp ( chomp($logp = `/usr/bin/basename $+{_inputsrc}`); return "$logp" ) ;\
+	add BOOT System:      %site %host, %mf ;\
+	add BOOT Filesystem:  %{fs}$2 ;\
+        add BOOT Event:       New boot events with no new nodes booted for two minutes ;\
+	add BOOT Time:      $1  in first logged string ;\
+	add BOOT %t  --  %tmsg ;\
+	add BOOT %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add BOOT %{rule_info}snx_boot.sr ;\
+	add BOOT %N ;\
+	add BOOT Summary of nodes being booted: ;\
+	add BOOT ------------------------------
+window= 1
+thresh= 1
+desc2= Report summary boot events
+action2= report BOOT %cmd "%{subject}: %boot_count nodes being booted.  ($1)" %list ;\
+	 delete BOOT
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel\:\sCommand\sline\:\sinitrd
+desc= Count boot events
+action= lcall %boot_count -> ( sub { ++$boot_counter; } ) ;\
+	add BOOT snx$2$3  $1

@@ -1,0 +1,78 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports recurring errors daily. The errors are collected by other
+# SEC rules, and this will will aggregated them.
+#
+# If there is no error, no notification will happen.
+#/
+
+# Sends an email every day with a summary of the current errors.  If
+# there is something to report, strings are extracted, usually sorted
+# by their keys (ie. the Sonexion nodes) and sent by email.
+
+type=Calendar
+time=43 13 * * * *
+desc=Daily summary
+action=lcall %o -> ( sub { my $sum_all = ""; \
+                           my $recap = ""; \
+                           if (%cscli_nodes_down) { \
+                             $recap .= "Number of nodes down: " . scalar(keys(%cscli_nodes_down)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of nodes down:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$cscli_nodes_down{$_}" } sort keys %cscli_nodes_down); \
+                           } \
+                           if (%crit_fru) { \
+                             $recap .= "Number of enclosure elements in critical state: " . scalar(keys(%crit_fru)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of enclosure elements in critical state:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$crit_fru{$_}" } sort keys %crit_fru) ; \
+                           } \
+                           if (%bad_tgt) { \
+                             $recap .= "Number of OSTs with unexpected number of Lustre targets: " . scalar(keys(%bad_tgt)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of unexpected number of Lustre targets on OSTs:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$bad_tgt{$_}" } sort keys %bad_tgt) ; \
+                           } \
+                           if (%full_fs) { \
+                             $recap .= "Number of partitions nearly full: " . scalar(keys(%full_fs)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of partitions nearly full:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$full_fs{$_}" } sort keys %full_fs) ; \
+                           }\
+                           if (%xyb_pcie_speed) { \
+                             $recap .= "Number of xybridge at PCIe Gen2 speed: " . scalar(keys(%xyb_pcie_speed)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of xybridge at PCIe Gen2 speed:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$xyb_pcie_speed{$_}" } sort keys %xyb_pcie_speed) ; \
+                           }\
+                           if (%bad_slot_state) { \
+                             $recap .= "Number of drive slots in an unexpected state: " .scalar(keys(%bad_slot_state)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of drive slots in an unexpected state:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$bad_slot_state{$_}" } sort keys %bad_slot_state) ; \
+                           }\
+                           if (%enc_mgt_psu) { \
+                             $recap .= "Number of PSU enclosure errors: " .scalar(keys(%enc_mgt_psu)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of enclosure errors:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$enc_mgt_psu{$_}" } sort keys %enc_mgt_psu) ; \
+                           }\
+                           if (%enc_mgt_fan) { \
+                             $recap .= "Number of fan enclosure errors: " .scalar(keys(%enc_mgt_fan)) . "\n"; \
+                             $sum_all .= "\n\n\nSummary of enclosure errors:\n" ; \
+                             $sum_all .= "================\n\n"; \
+                             $sum_all .= join("\n", map { "$enc_mgt_fan{$_}" } sort keys %enc_mgt_fan) ; \
+                           }\
+                           if ($sum_all) { return "\n" . $recap . "\n\n" . $sum_all; } else { return undef; } \
+                           } ) ;\
+       if %o (add DAILY_SUMMARY System:      %site %host, %mf ;\
+              add DAILY_SUMMARY Filesystem:  all ;\
+              add DAILY_SUMMARY Event:       Daily summary. ;\
+              add DAILY_SUMMARY %t  --  %tmsg ;\
+              add DAILY_SUMMARY %o ;\
+              add DAILY_SUMMARY %{rule_info}summary.sr ;\
+              report DAILY_SUMMARY %cmd "%{subject}: Daily summary" %list ;\
+              delete DAILY_SUMMARY ;\
+       )
+

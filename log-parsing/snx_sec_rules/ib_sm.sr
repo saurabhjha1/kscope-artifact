@@ -1,0 +1,52 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports occurence of IB SM failover and the absence of an SM
+# anywhere on the fabric.
+#
+# Origin
+# ~~~~~~
+# From ESFS/IBSANITY's output: **/scratch/esfm/logs/ibsanity2.out**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# ::
+#
+#   bwesms1: has replaced bwesms2 as the new SM master
+#   No SM is active on the list of known SM nodes
+#/
+
+# SM failover
+type= Single
+ptype= RegExp
+pattern= (.+): has replaced (.+) as the new SM master
+desc= ib sm failover $2 $1
+action= add IB_SM_FAILOVER Mainframe: %site %mf ;\
+		add IB_SM_FAILOVER System:    $1 ;\
+        add IB_SM_FAILOVER Event:     IB SM failover from $2 to $1. ;\
+        add IB_SM_FAILOVER Time:      %t ;\
+        add IB_SM_FAILOVER %t  --  %tmsg ;\
+        add IB_SM_FAILOVER %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+ 		add IB_SM_FAILOVER %{rule_info}ib_sm.sr ;\
+        report IB_SM_FAILOVER %cmd "%subject IB SM failover from $2 to $1." %list ;\
+        delete IB_SM_FAILOVER
+
+
+# No SM available
+type= SingleWithSuppress
+ptype= RegExp
+pattern= No SM is active on the list of known SM nodes
+desc= no active sm on fabric
+action= add IB_NO_SM 1 day %wmsg ;\
+        add IB_NO_SM Mainframe: %site %mf ;\
+		add IB_NO_SM System:    $1 ;\
+        add IB_NO_SM Event:     No active SM on IB fabric. ;\
+        add IB_NO_SM Time:      %t ;\
+        add IB_NO_SM %t  --  %tmsg ;\
+        add IB_NO_SM %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+ 		add IB_NO_SM %{rule_info}ib_sm.sr ;\
+        add IB_NO_SM %note ;\
+        report IB_NO_SM %cmd "%subject No active SM on IB fabric." %list,%list_page ;\
+        delete IB_NO_SM
+window=86400

@@ -1,0 +1,64 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports when a there is a enospc 'No space on device'. All messages are
+# aggregated in one email per 30 minutes.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# Strings creating the error. Note that the line number from the C
+# source is important in the *Skipped ...* message.
+# ::
+# Reads
+# 2018-01-02T19:32:15-06:00 snx11003n251 kernel: LustreError: 26525:0:(ofd_dev.c:1405:ofd_create_hdl()) snx11003-OST00f7: unable to precreate: rc = -28
+# 2018-01-02T19:32:15-06:00 snx11003n003 kernel: LustreError: 76710:0:(osp_precreate.c:464:osp_precreate_send()) snx11003-OST00f7-osc-MDT0000: can't precreate: rc = -28
+# 2018-01-02T19:33:41-06:00 snx11003n251 kernel: LustreError: 70250:0:(ofd_dev.c:1405:ofd_create_hdl()) snx11003-OST00f7: unable to precreate: rc = -28
+# 2018-01-02T19:33:41-06:00 snx11003n003 kernel: LustreError: 76710:0:(osp_precreate.c:464:osp_precreate_send()) snx11003-OST00f7-osc-MDT0000: can't precreate: rc = -28
+#
+#/
+
+# To aggregate email, create ENOSPC_ERROR if it doesn't exist, with a
+# 30 minute lifetime. If it already exists, just append the message line.
+# If matched, pattern2 will clear the error.
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !ENOSPC_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* LustreError: .*: .*precreate: rc = -28.*
+desc= enospc error
+action= create ENOSPC_ERROR 1800 (lcall %o -> (sub { $ENOSPC_ERROR_count; }) ; if %o (report _THIS %cmd "%{subject}: ENOSPC No space on device error %o " %list)) ;\
+        lcall %o -> ( sub { $ENOSPC_ERROR_count = 0; } ) ;\
+        add ENOSPC_ERROR 30 minutes %wmsg ;\
+        add ENOSPC_ERROR System:      %site %host, %mf ;\
+        add ENOSPC_ERROR Filesystem:  all ;\
+        add ENOSPC_ERROR Event:       ENOSPC error. ;\
+        add ENOSPC_ERROR Time:      $1 %Tmsg ;\
+        add ENOSPC_ERROR %t  --  %tmsg2 ;\
+        add ENOSPC_ERROR %{rule_info} enospc-no-space-28.sr ;\
+        if %urlsr ( add ENOSPC_ERROR %{urlsr}/enospc-no-space-28.sr.html ) ;\
+        add ENOSPC_ERROR %note ;\
+        add ENOSPC_ERROR %{N} ;\
+        add ENOSPC_ERROR From log file: $+{_inputsrc}%{N} ;\
+        add ENOSPC_ERROR %{N}
+
+type= Single
+context = [SYSLOG_LOG && ENOSPC_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* LustreError: .*: .*precreate: rc = -28.*
+desc= enospc No space on device error $2$3 $4 $5
+action= add ENOSPC_ERROR $0 ;\
+        lcall %o -> ( sub { ++$ENOSPC_ERROR_count; } )
+
+type= Single
+context = [SYSLOG_LOG && ENOSPC_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* LustreError: .*: .*precreate: rc = -28.*
+desc= enospc No space on device error $2$3 $4 $5
+action= add ENOSPC_ERROR $0 ;\
+        lcall %o -> ( sub { ++$ENOSPC_ERROR_count; } )
+

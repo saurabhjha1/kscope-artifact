@@ -1,0 +1,53 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of xybridge PCI errors. Up to one email is sent
+# per minute per new error.
+#
+# An error is considered cleared if it doesn't occur again within 24
+# hours.
+#
+# Origin
+# ~~~~~~
+# From **/var/log/messages**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# ::
+#
+#   2013-03-21T17:29:29-05:00 snx11003n232 kernel: [4921181.192189] xybridge: Rolling back to PCIe Gen2 speed
+#
+# Corrective action
+# ~~~~~~~~~~~~~~~~~
+# None known so far
+#/
+
+type=SingleWith2Thresholds
+context= [SYSLOG_LOG]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+) kernel: .* xybridge: Rolling back to PCIe Gen2 speed
+desc= xybridge rolling back $2$3
+action= exists %x XYB_PCIE_SPEED ;\
+        if %x ( none ) \
+        else ( create XYB_PCIE_SPEED 60 (lcall %o -> (sub { $XYB_PCIE_SPEED_count; }) ; report _THIS %cmd "%{subject}: xybridge rolling back to PCIe Gen2 speed on %o node(s)" %list) ;\
+            lcall %o -> ( sub { $XYB_PCIE_SPEED_count = 0; } ) ;\
+            add XYB_PCIE_SPEED System:      %site %host, %mf ;\
+            add XYB_PCIE_SPEED Filesystem:  all ;\
+            add XYB_PCIE_SPEED Event:       xybridge rolling back to PCIe Gen2 speed. ;\
+            add XYB_PCIE_SPEED Time:      $1 %Tmsg ;\
+            add XYB_PCIE_SPEED %t  --  %tmsg2 ;\
+            add XYB_PCIE_SPEED %{rule_info}xybridge_pci.sr ;\
+            if %urlsr ( add XYB_PCIE_SPEED %{urlsr}/xybridge_pci.sr.html ) ;\
+            add XYB_PCIE_SPEED %{N} ;\
+            add XYB_PCIE_SPEED From log file: $+{_inputsrc}%{N} ;\
+            add XYB_PCIE_SPEED %{N} ;\
+        ) ;\
+        add XYB_PCIE_SPEED $0 ;\
+        lcall %o $2 $3 $0 -> ( sub { ++$XYB_PCIE_SPEED_count; $xyb_pcie_speed{$_[0] . $_[1]} = $_[2]; return undef; } )
+window=1
+thresh=1
+desc2= xybridge pcie speed good for $2$3
+action2= lcall %o $2 $3 $0 -> ( sub { --$XYB_PCIE_SPEED_count; delete($xyb_pcie_speed{$_[0] . $_[1]}); return undef; } )
+window2= 86400
+thresh2=0

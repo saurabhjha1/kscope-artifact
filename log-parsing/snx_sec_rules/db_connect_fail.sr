@@ -1,0 +1,21 @@
+#
+# Instances of logged strings:
+#
+# Feb 26 09:47:58 snx11003n000 /usr/sbin/cerebrod[35925]: lmt_mysql: failed to connect to database
+
+type= SingleWithSuppress
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).*(failed to connect to database)
+desc= db connect failed
+action= add DB_CONN_FAIL 6 hours %wmsg ;\
+	add DB_CONN_FAIL System:      %site %host, %mf ;\
+	add DB_CONN_FAIL Filesystem:  %{fs}$2 ;\
+	add DB_CONN_FAIL Event:       $4 ;\
+	add DB_CONN_FAIL Time:      $1  %Tmsg ;\
+	add DB_CONN_FAIL %t  --  %tmsg ;\
+	add DB_CONN_FAIL %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add DB_CONN_FAIL %{rule_info}db_connect_fail.sr ;\
+	add DB_CONN_FAIL %note ;\
+	report DB_CONN_FAIL %cmd "%{subject}$2: $3 $4" %list ;\
+	delete DB_CONN_FAIL
+window= 21600

@@ -1,0 +1,54 @@
+
+#/ Begin doc
+
+# Report OST's newly being served with recovery enabled.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-02-19T15:16:23-06:00 snx11003n070 kernel: [  351.666581] Lustre: snx11003-OST010a: Now serving snx11003-OST010a/ on /dev/md4 with recovery enabled
+
+# 2013-02-19T15:16:24-06:00 snx11003n070 kernel: [  352.347085] Lustre: snx11003-OST010b: Now serving snx11003-OST010b/ on /dev/md6 with recovery enabled
+# 2013-02-19T15:19:56-06:00 snx11003n070 kernel: [  564.561470] Lustre: snx11003-OST010d: Now serving snx11003-OST010d/ on /dev/md3 with recovery enabled
+# 2013-02-19T15:19:58-06:00 snx11003n070 kernel: [  566.121214] Lustre: snx11003-OST010c: Now serving snx11003-OST010c/ on /dev/md1 with recovery enabled
+
+#/ End doc
+
+
+type= SingleWith2Thresholds
+continue= Takenext
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*\s(snx.*Now\sserving.*)
+desc= recovery enabled
+action= lcall %recovery_enabled_count -> ( sub { $recovery_enabled_counter = 0; } ) ;\
+	eval %logp ( chomp($logp = `/usr/bin/basename $+{_inputsrc}`); return "$logp" ) ;\
+	add RECOVERY_ENABLED System:      %site %host, %mf ;\
+	add RECOVERY_ENABLED Filesystem:  %{fs}$2 ;\
+	add RECOVERY_ENABLED Event:       recovery enabled event ;\
+	add RECOVERY_ENABLED Time:      $1  %Tmsg ;\
+	add RECOVERY_ENABLED %t  --  %tmsg ;\
+	add RECOVERY_ENABLED %N ;\
+	add RECOVERY_ENABLED Log file:%{N}---------%{N}%{host}:$+{_inputsrc}%{N} ;\
+	add RECOVERY_ENABLED %{rule_info}snx_recovery_enabled.sr ;\
+	add RECOVERY_ENABLED %N ;\
+	add RECOVERY_ENABLED Log entries for this event over the past two minutes: ;\
+	add RECOVERY_ENABLED -----------------------------------------------------
+window= 1
+thresh= 1
+desc2= Report OSTs newly served with recovery enabled
+action2= report RECOVERY_ENABLED %cmd "%{subject}: %recovery_enabled_count OST's newly being served with recovery enabled.  ($1)" %list ;\
+	 delete RECOVERY_ENABLED
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*\s(snx.*Now\sserving.*)
+desc= Count OSTs newly being served with recovery enabled
+action= lcall %recovery_enabled_count -> ( sub { ++$recovery_enabled_counter; } ) ;\
+	add RECOVERY_ENABLED $0

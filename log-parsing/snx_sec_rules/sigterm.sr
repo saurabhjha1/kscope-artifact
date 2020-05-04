@@ -1,0 +1,12 @@
+type= Single
+ptype= SubStr
+pattern= SEC_SHUTDOWN
+context= [SEC_INTERNAL_EVENT]
+desc= Report when sec receives a sigterm
+action= shellcmd /bin/mv %sec_log_dir/sec.pid %sec_log_dir/sec.pid_prior ;\
+        add SIGTERM_RECVD System:    %site %host, %mf ;\
+        add SIGTERM_RECVD %t  --  Time of this event. ;\
+        add SIGTERM_RECVD %{N}sigterm received by SEC. ;\
+        add SIGTERM_RECVD SEC is terminating.%N ;\
+        add SIGTERM_RECVD %{rule_info}sigterm.sr ;\
+        report SIGTERM_RECVD %cmd "%subject sigterm received by snx_SEC" %list

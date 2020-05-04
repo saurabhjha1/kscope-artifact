@@ -1,0 +1,45 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports read-only mounted EXT2/3/4 filesystems on the OSSes. These
+# filesystems are used by Lustre and thus should be read/write
+# mounted. Every instance will be reported once a day.
+#
+# Origin
+# ~~~~~~
+# From **lmmon-mount_fs.log**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Fri Feb 15 11:50:09 2013: snx11003n004: /dev/md128 on /WIBS/snx11003n004:md0 type ext2 (ro,acl)
+#/
+
+type= single
+continue= takenext
+context = [MOUNT_FS_LOG && !READONLY_FS]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: snx(\d+)(n\d+): (/dev/md.*) type ext[234] \(.*\bro\b.*\)
+desc= Read-only EXT2/3/4 filesystem
+action= create READONLY_FS 60 (lcall %o -> (sub { $READONLY_FS_count; }) ; if %o (report _THIS %cmd "%{subject}: %o Read-only EXT2/3/4 filesystem on OSS(es)" %list)) ;\
+        lcall %o -> ( sub { $READONLY_FS_count = 0; } ) ;\
+        add READONLY_FS 1 day %wmsg ;\
+        add READONLY_FS System:      %site %host, %mf ;\
+        add READONLY_FS Filesystem:  %{fs} ;\
+        add READONLY_FS Event:       Read-only EXT2/3/4 filesystem on %{fs}$2$3. ;\
+        add READONLY_FS %t  --  %tmsg2 ;\
+        add READONLY_FS %{rule_info}ro_fs.sr ;\
+        if %urlsr ( add READONLY_FS %{urlsr}/ro_fs.sr.html ) ;\
+        add READONLY_FS %{N} ;\
+        add READONLY_FS From log file: $+{_inputsrc}%{N} ;\
+        add READONLY_FS %{N}
+
+type= SingleWithSuppress
+ptype= RegExp
+context = [MOUNT_FS_LOG && READONLY_FS]
+pattern= (\d\d:\d\d:\d\d) \d+: snx(\d+)(n\d+): (/dev/md.*) type ext[234] \(.*\bro\b.*\)
+desc= Read-only EXT2/3/4 filesystem %{fs}$2$3 $4
+action= add READONLY_FS $0 ;\
+        lcall %o -> ( sub { ++$READONLY_FS_count; } )
+window=86400

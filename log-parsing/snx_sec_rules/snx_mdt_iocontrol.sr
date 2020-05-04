@@ -1,0 +1,30 @@
+
+#/ Begin doc
+
+# Report mdt_iocontrol events.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-02-16T12:42:47-06:00 snx11001n002 kernel: [1119051.435711] LustreError: 81783:0:(mdt_handler.c:5547:mdt_iocontrol()) Aborting recovery for device snx11001-MDT0000
+
+#/ End doc
+
+
+type= SingleWithSuppress
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*(LustreError).*(mdt_iocontrol)
+desc= mdt recovery event
+action= add MDT_IOCONTROL 10 minutes %wmsg ;\
+	add MDT_IOCONTROL System:      %site %host, %mf ;\
+	add MDT_IOCONTROL Filesystem:  %{fs}$2 ;\
+	add MDT_IOCONTROL Event:       $4, mdt_iocontrol event ;\
+	add MDT_IOCONTROL Time:      $1  %Tmsg ;\
+	add MDT_IOCONTROL %t  --  %tmsg ;\
+	add MDT_IOCONTROL %N ;\
+	add MDT_IOCONTROL %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add MDT_IOCONTROL %{rule_info}snx_mdt_iocontrol.sr ;\
+	add MDT_IOCONTROL %N ;\
+	report MDT_IOCONTROL %cmd "%{subject}$2: $3 $4 $5 event" %list ;\
+	delete MDT_IOCONTROL
+window= 600

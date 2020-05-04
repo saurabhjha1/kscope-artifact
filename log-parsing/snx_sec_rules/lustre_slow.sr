@@ -1,0 +1,80 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports when Lustre is complaining about some slow operations, which
+# can have an underlying cause such as a bad connection, device, ...
+# There will be an initial notification per node on a per minute
+# basis. Similar errors on the same node will then be reported
+# hourly.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   2014-08-28T22:48:26-05:00 snx11003n163 kernel: LustreError: 59624:0:(lustre_fsfilt.h:264:fsfilt_brw_start_log()) snx11003-OST027c: slow journal start 62s
+#   2014-08-28T22:48:26-05:00 snx11003n163 kernel: LustreError: 59381:0:(filter_io_26.c:777:filter_commitrw_write()) snx11003-OST027c: slow brw_start 75s
+#   2014-08-28T22:48:36-05:00 snx11003n163 kernel: LustreError: 59576:0:(filter_io_26.c:800:filter_commitrw_write()) snx11003-OST027c: slow direct_io 93s
+#   2014-08-28T22:49:11-05:00 snx11003n163 kernel: LustreError: 59455:0:(filter_io_26.c:695:filter_commitrw_write()) snx11003-OST027c: slow quota init 117s
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !LUSTRE_SLOW]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: LustreError: .+-OST.+: slow.+\d+s
+desc= lustre slow
+action= create LUSTRE_SLOW 60 (lcall %o -> ( sub { return $LUSTRE_SLOW_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o LustreError -- slow OST" %list)) ;\
+        lcall %o -> ( sub { $LUSTRE_SLOW_count = 0; } ) ;\
+        add LUSTRE_SLOW System:      %site %host, %mf ;\
+        add LUSTRE_SLOW Filesystem:  all ;\
+        add LUSTRE_SLOW Event:       Slow Lustre OST. ;\
+        add LUSTRE_SLOW Time:      $1 %Tmsg ;\
+        add LUSTRE_SLOW %t  --  %tmsg2 ;\
+        add LUSTRE_SLOW %{rule_info}lustre_slow.sr ;\
+        if %urlsr ( add LUSTRE_SLOW %{urlsr}/lustre_slow.sr.html ) ;\
+        add LUSTRE_SLOW From log file: $+{_inputsrc}%{N} ;\
+        add LUSTRE_SLOW %{N}
+
+# Add a new slow OST warning to the list
+type= SingleWithSuppress
+continue=takenext
+ptype= RegExp
+context = [SYSLOG_LOG && LUSTRE_SLOW]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: LustreError: .+-OST.+: slow.+\d+s
+desc= lustre slow $2 $3
+action= add LUSTRE_SLOW $0 ;\
+        lcall %o -> ( sub { ++$LUSTRE_SLOW_count; } )
+window=3600
+
+# Note: do we really need a calendar for that. Couldn't we just have a
+# 3600 second action?
+
+# Add for hourly summary
+type= Single
+ptype= RegExp
+context = [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: LustreError: .+-OST.+: slow.+\d+s
+desc= Lustre slow hourly $0
+action= lcall %o $0 -> ( sub { $lustre_slow_sum .= $_[0] . "\n"; return $lustre_slow_sum; } )
+
+# Hourly summary
+type=Calendar
+time=7 * * * * *
+desc=Lustre slow hourly
+action= lcall %o -> ( sub { return $lustre_slow_sum; } ) ;\
+		if %o (add LUSTRE_SLOW_SUMMARY System:      %site %host, %mf ;\
+              add LUSTRE_SLOW_SUMMARY Filesystem:  all ;\
+              add LUSTRE_SLOW_SUMMARY Event:       Slow Lustre OST summary. ;\
+              add LUSTRE_SLOW_SUMMARY %t  --  %tmsg ;\
+              add LUSTRE_SLOW_SUMMARY %o ;\
+              add LUSTRE_SLOW_SUMMARY %{rule_info}lustre_slow.sr ;\
+              if %urlsr ( add LUSTRE_SLOW_SUMMARY %{urlsr}/lustre_slow.sr.html ) ;\
+              report LUSTRE_SLOW_SUMMARY %cmd "%{subject}: Slow Lustre OST hourly summary" %list ;\
+              delete LUSTRE_SLOW_SUMMARY ;\
+       ) ;\
+	   lcall %o -> ( sub { $lustre_slow_sum = undef; } )

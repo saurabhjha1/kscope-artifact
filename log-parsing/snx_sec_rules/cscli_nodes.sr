@@ -1,0 +1,58 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports the elements in enclosures in critical states. These are the
+# FRU, like fans or power supplies. The first time a failure happens,
+# it will be reported (with up to 1 email per minute for this class of
+# errors), then it will appear in the daily summary until the problem
+# is fixed. The problem is considered fixed if it doesn't appear again
+# for an hour.
+#
+# Origin
+# ~~~~~~
+# **lmmon-cscli_mon_nodes.log**, generated from **lm-collect.py**.
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Detects when a new email may need to be created.
+# ::
+#
+#   Tue Apr  2 14:00:55 2013: snx11003n194:  DOWN  for 0d  0h  0m 31s  checked 2013-04-02 14:00:12  "CRITICAL - Host Unreachable (snx11003n194)"
+#   Tue Apr  2 14:11:00 2013: snx11003n124:  DOWN  for 0d  0h 18m 19s  checked 2013-04-02 14:08:02  "(Host Check Timed Out)"
+#/
+
+# To aggregate the errors in an email, create CSCLI_NODE_DOWN if it doesn't
+# exist, with a 60 seconds lifetime. If it already exists, just append
+# the message line.  If matched, pattern2 will clear the error.
+#
+# If the message doesn't appear again for 1 hour, then the error will be
+# cleared.
+
+type=SingleWith2Thresholds
+context = [CSCLI_MON_NODES_LOG]
+ptype=RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: snx(\d+)(n\d+):\s+DOWN
+desc= node $2 $3 down
+action= exists %x CSCLI_NODE_DOWN ;\
+        if %x ( none ) \
+        else ( create CSCLI_NODE_DOWN 60 (lcall %o -> (sub { $CSCLI_NODE_DOWN_count; }) ; report _THIS %cmd "%{subject}: %o Node(s) down (NEW)" %list,%list_page) ;\
+                lcall %o -> ( sub { $CSCLI_NODE_DOWN_count = 0; } ) ;\
+                add CSCLI_NODE_DOWN System:      %site %host, %mf ;\
+                add CSCLI_NODE_DOWN Filesystem:  all ;\
+                add CSCLI_NODE_DOWN Event:       Node(s) down ;\
+                add CSCLI_NODE_DOWN Time:      $1 %Tmsg ;\
+                add CSCLI_NODE_DOWN %t  --  %tmsg ;\
+                add CSCLI_NODE_DOWN %{rule_info}cscli_nodes.sr ;\
+                if %urlsr ( add CSCLI_NODE_DOWN %{urlsr}/cscli_nodes.sr.html ) ;\
+                add CSCLI_NODE_DOWN %{N} ;\
+                add CSCLI_NODE_DOWN From log file: $+{_inputsrc}%{N} ;\
+                add CSCLI_NODE_DOWN %{N} ;\
+        ) ;\
+        add CSCLI_NODE_DOWN $0 ;\
+        lcall %o $2 $3 $0 -> ( sub { ++$CSCLI_NODE_DOWN_count; $cscli_nodes_down{$_[0] . $_[1]} = $_[2]; return undef; } )
+window=1
+thresh=1
+desc2= node $2 $3 not down
+action2= lcall %o $2 $3 $0 -> ( sub { --$CSCLI_NODE_DOWN_count; delete($cscli_nodes_down{$_[0] . $_[1]}); return undef; } )
+window2= 3600
+thresh2=0

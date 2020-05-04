@@ -1,0 +1,62 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of xybridge heartbeat lost. Sends up to one email
+# per minute; errors will accumulate.
+#
+# Origin
+# ~~~~~~
+# From **/var/log/messages**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#  2013-03-22T02:10:53-05:00 snx11003n247 kernel: [4961068.923838] xybridge: heartbeat lost
+#/
+
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !XYB_LOST_HB]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: .* xybridge: heartbeat lost
+desc= xyb lost heartbeat
+action= create XYB_LOST_HB 60 ( \
+            lcall %o -> (sub { $XYB_LOST_HB_count; }); \
+            if %o (report _THIS %cmd "%{subject}: heartbeat lost from %o paired HA systems" %list)) ;\
+        lcall %o -> ( sub { $XYB_LOST_HB_count = 0; } ) ;\
+        add XYB_LOST_HB System:     %site %host, %mf ;\
+        add XYB_LOST_HB Filesystem: all ;\
+        add XYB_LOST_HB Event:      Heartbeat lost from HA systems. ;\
+        add XYB_LOST_HB Time:      $1 %Tmsg ;\
+        add XYB_LOST_HB %t  --  %tmsg2 ;\
+        add XYB_LOST_HB %{rule_info}xybridge_hb.sr ;\
+        if %urlsr ( add XYB_LOST_HB %{urlsr}/xybridge_hb.sr.html ) ;\
+        add XYB_LOST_HB %{N}
+
+type= Single
+context = [SYSLOG_LOG && XYB_LOST_HB]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: .* xybridge: heartbeat lost
+desc= xyb lost heartbeat %{fs}$2$3
+action= add XYB_LOST_HB $0 ;\
+        lcall %o -> ( sub { ++$XYB_LOST_HB_count; } )
+
+
+# The problem with the following rule is that the message is issued
+# when a node reboots.  Also It's coming from the node that died, and
+# apparently never from the node that reported the dying node.
+#   Feb 10 20:33:19 snx11003n035 kernel: [   11.563765] xybridge: heartbeat detected
+#type= Single
+#ptype= RegExp
+#pattern=  (\d\d:\d\d:\d\d) (.+?) kernel: .* xybridge: heartbeat detected
+#desc= Heartbeat back $2
+#action= add XYB_HB System:    $2 ;\
+#        add XYB_HB_BACK Event:     Heartbeat is back from HA system paired with $2. ;\
+#        add XYB_HB_BACK Time:      $1 %Tmsg ;\
+#        add XYB_HB_BACK %t  --  %tmsg ;\
+#        add XYB_HB_BACK %N ;\
+#        add XYB_HB_BACK %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+#        add XYB_HB_BACK %N ;\
+#        report XYB_HB_BACK %cmd "%subject Heartbeat is back from HA system paired with $2" %list ;\
+#        delete XYB_HB_BACK

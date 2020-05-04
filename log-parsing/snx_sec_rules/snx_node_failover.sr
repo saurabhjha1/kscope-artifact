@@ -1,0 +1,52 @@
+
+# For Sonexion Neo 1.3.1.
+
+# Report Sonexion node failover events.
+
+# The first node failover event is reported immediately.  Subsequent node
+# failover events are aggregated over a rolling two-minute window, with
+# information about that aggregation of failover events being emailed out
+# after two minutes of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# May 10 11:01:55 system.site.gov snx11025n002 " from_id="stonith-ng" to_id="stonith-ng" client_gen="1" src="snx11025n002" seq="1fc" hg="5065e083" ts="518d3613" ld="0.54 0.34 0.32 2/734 33750" ttl="3" auth="1 7b28e2f566ed493cf9883499e40f3e59f3ea6181" state="2" st_target="snx11025n003" /> 
+
+# Apr 13 17:19:28 snx11053n000 snx11053n006 " from_id="stonith-ng" to_id="stonith-ng" client_gen="1" src="snx11053n006" seq="4ab45" hg="51bee910" ts="534ab910" ld="0.08 0.22 0.25 1/1815 58749" ttl="3" auth="1 8d024f4b8e93d8d05f0415bd0c8059379e1d7da7" state="2" st_target="snx11053n007" />
+
+# Referenced pattern components in logged data:
+#
+# $1 = Time of event.
+# $2 = snx filesystem.
+# $3 = Node on the receiving end of the failover event.
+# $4 = Node which failed.
+
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).*stonith-ng.*src\=\"snx\d+n\d+\".*st_target\=\"snx\d+(n\d+)
+desc= node failover
+action= if %node_failover_count ( \
+	    eval %current_time_nf ( chomp (my $current_time_nf=`/bin/date +%%H:%%M:%%S`); return "$current_time_nf" ) ;\
+	    set NODE_FAILOVER 120 ( \
+	        prepend NODE_FAILOVER Initial %s event: ;\
+	        prepend NODE_FAILOVER Summary:   %node_failover_count %{s}s with no new ones for two minutes.%N%N ;\
+	        report NODE_FAILOVER %cmd "%{subject}: %{s}s (%node_failover_count) (%first_event_time_nf)" %list ;\
+	        free %node_failover_count ;\
+	    ) ;\
+	    lcall %node_failover_count -> ( sub { ++$node_failover_counter; } ) ;\
+	    add NODE_FAILOVER snx$2 $4 failed over to $3 at $1  --  Observed at: %current_time_nf ;\
+	) else ( \
+	    eval %first_event_time_nf ( chomp(my $first_event_time_nf=`/bin/date +%%H:%%M:%%S`); return "$first_event_time_nf" ) ;\
+	    create NODE_FAILOVER 120 ( free %node_failover_count ) ;\
+	    lcall %node_failover_count -> ( sub { $node_failover_counter = 1; } ) ;\
+	    add NODE_FAILOVER System:    %host, %SN ;\
+	    add NODE_FAILOVER Event:     snx$2 %s ;\
+	    add NODE_FAILOVER Time:      $1  in logged string. ;\
+	    add NODE_FAILOVER %t  --  %tmsg ;\
+	    add NODE_FAILOVER %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	    add NODE_FAILOVER %{rule_info}snx_node_failover.sr ;\
+	    report NODE_FAILOVER %cmd "%{subject}$2: $4 failed over to $3" %list ;\
+ 	    add NODE_FAILOVER %{N}Additional %{s} events after the first one:%{N}----------------------------------------------------%{N} ;\
+	)

@@ -1,0 +1,48 @@
+
+#/ Begin doc
+
+# Report stonith events.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+# 
+# 2013-02-19T16:24:37-06:00 snx11003n071 stonith-ng: [38515]: info: log_operation: Operation 'poweroff' [86245] (call 0 from (null)) for host 'snx11003n070' with device 'snx11003n071-stonith' returned: 0
+
+#/ End doc
+
+
+type= SingleWith2Thresholds
+continue= Takenext
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*log_operation:\sOperation\s'poweroff'.*for\shost\s'snx\d+(n\d+)'
+desc= stonith failover poweroff event
+action= lcall %stonith_count -> ( sub { $stonith_counter = 0; } ) ;\
+	eval %logp ( chomp($logp = `/usr/bin/basename $+{_inputsrc}`); return "$logp" ) ;\
+	add STONITH System:      %site %host, %mf ;\
+	add STONITH Filesystem:  %{fs}$2 ;\
+        add STONITH Event:       New stonith events with no new nodes stonithed for two minutes ;\
+	add STONITH Time:      $1  %Tmsg ;\
+	add STONITH %t  --  %tmsg ;\
+	add STONITH %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+	add STONITH %{rule_info}snx_stonith.sr ;\
+	add STONITH %N ;\
+	add STONITH Summary of stonith events:
+window= 1
+thresh= 1
+desc2= Report summary stonith events
+action2= report STONITH %cmd "%{subject}: %stonith_count nodes stonithed for failover, $4 failed to $3.  ($1)" %list ;\
+	 delete STONITH
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\s.*log_operation:\sOperation\s'poweroff'.*for\shost\s'snx\d+(n\d+)'
+desc= Count stonith events
+action= lcall %stonith_count -> ( sub { ++$stonith_counter; } ) ;\
+	add STONITH $4 stonithed for failover to $3

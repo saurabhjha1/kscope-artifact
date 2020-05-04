@@ -1,0 +1,68 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports when a reconnection cannot be established. All messages are
+# aggregated in one email per 30 minutes.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# Strings creating the error. Note that the line number from the C
+# source is important in the *Skipped ...* message.
+# ::
+# Reads
+# 2017-04-30T02:03:10-05:00 snx11003n031 kernel: Lustre: snx11003-OST001b: Bulk IO read error with 9558c965-b957-3d69-e044-7b810bdfe44d (at 10780@gni), client will retry: rc -107
+# 2017-04-30T02:03:10-05:00 snx11003n133 kernel: Lustre: snx11003-OST0081: Bulk IO read error with fcc84954-de8a-2807-2fae-1c0036078dd3 (at 12739@gni), client will retry: rc -107
+# 2017-04-30T02:03:10-05:00 snx11003n029 kernel: Lustre: snx11003-OST0019: Bulk IO read error with 6b3fb276-ac10-1bd4-7df6-93abe49cfc37 (at 10293@gni), client will retry: rc -110
+# 2017-04-30T02:03:10-05:00 snx11003n324 kernel: Lustre: snx11003-OST0140: Bulk IO read error with 32e70a01-5a44-7067-f8a6-902bf7ae68e4 (at 10389@gni), client will retry: rc -110
+# Writes:
+# 2017-05-02T03:31:10-05:00 snx11002n032 kernel: Lustre: snx11002-OST001c: Bulk IO write error with d3eba564-0df4-fcad-1f5b-92b6ee6b0b76 (at 10.10.108.6@o2ib2), client will retry: rc -110
+# 2017-05-02T03:33:04-05:00 snx11002n004 kernel: Lustre: snx11002-OST0000: Bulk IO write error with d3eba564-0df4-fcad-1f5b-92b6ee6b0b76 (at 10.10.108.6@o2ib2), client will retry: rc -110
+# 2017-05-02T03:33:07-05:00 snx11002n032 kernel: Lustre: snx11002-OST001c: Bulk IO write error with d3eba564-0df4-fcad-1f5b-92b6ee6b0b76 (at 10.10.108.6@o2ib2), client will retry: rc -110
+#
+#/
+
+# To aggregate email, create BULKIO_ERROR if it doesn't exist, with a
+# 30 minute lifetime. If it already exists, just append the message line.
+# If matched, pattern2 will clear the error.
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !BULKIO_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*: Bulk IO .* error .*client will retry: rc .*
+desc= bulkio error
+action= create BULKIO_ERROR 1800 (lcall %o -> (sub { $BULKIO_ERROR_count; }) ; if %o (report _THIS %cmd "%{subject}: Bulk IO error %o " %list)) ;\
+        lcall %o -> ( sub { $BULKIO_ERROR_count = 0; } ) ;\
+        add BULKIO_ERROR 30 minutes %wmsg ;\
+        add BULKIO_ERROR System:      %site %host, %mf ;\
+        add BULKIO_ERROR Filesystem:  all ;\
+        add BULKIO_ERROR Event:       Bulk IO error. ;\
+        add BULKIO_ERROR Time:      $1 %Tmsg ;\
+        add BULKIO_ERROR %t  --  %tmsg2 ;\
+        add BULKIO_ERROR %{rule_info}bulk_io_error.sr ;\
+        if %urlsr ( add BULKIO_ERROR %{urlsr}/bulk_io_error.sr.html ) ;\
+        add BULKIO_ERROR %note ;\
+        add BULKIO_ERROR %{N} ;\
+        add BULKIO_ERROR From log file: $+{_inputsrc}%{N} ;\
+        add BULKIO_ERROR %{N}
+
+type= Single
+context = [SYSLOG_LOG && BULKIO_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*: Bulk IO read error .*client will retry: rc .*
+desc= bulkio error $2$3 $4 $5
+action= add BULKIO_ERROR $0 ;\
+        lcall %o -> ( sub { ++$BULKIO_ERROR_count; } )
+
+type= Single
+context = [SYSLOG_LOG && BULKIO_ERROR]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d-\d\d:\d\d)\ssnx(\d+)(n\d+)\skernel.* Lustre: .*: Bulk IO write error .*client will retry: rc .*
+desc= bulkio error $2$3 $4 $5
+action= add BULKIO_ERROR $0 ;\
+        lcall %o -> ( sub { ++$BULKIO_ERROR_count; } )
+

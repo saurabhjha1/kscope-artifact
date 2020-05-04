@@ -1,0 +1,48 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports some undecipherable GEM error. Possibly that heap overflow bug.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# Neo 1.4::
+# ::
+#
+#   2013-09-24T01:56:28-05:00 snx11003n072 GEM: INFO: /dev/sg0 SHX0978906G06PD: 2013-09-24 06:56:17.629; HAL; hal; 02; Restoring state sled 1 element 2
+#
+# Neo 1.5::
+#   2014-09-19T14:23:09-05:00 snx11003n228 ses_monitor.py: /dev/sg1 SHX0978906G07DF: 2014-04-22 01:26:11.571; HAL; hal; 02; Restoring state sled 2 element 3
+#
+#/
+
+type= single
+continue=takenext
+context = [SYSLOG_LOG && !GEM_SLED]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).* Restoring state sled (\d+) element (\d+)
+desc= GEM RESTORING STATE SLED
+action= create GEM_SLED 3 (lcall %o -> (sub { $GEM_SLED_count; }) ; if %o (report _THIS %cmd "%{subject}: %o GEM Restoring state sled" %list)) ;\
+        lcall %o -> ( sub { $GEM_SLED_count = 0; } ) ;\
+        add GEM_SLED System:      %site %host, %mf ;\
+        add GEM_SLED Filesystem:  all ;\
+        add GEM_SLED Event:       GEM RESTORING STATE SLED. ;\
+        add GEM_SLED Time:      $1 %Tmsg ;\
+        add GEM_SLED %t  --  %tmsg2 ;\
+        add GEM_SLED %{rule_info}gem_sled.sr ;\
+        if %urlsr ( add GEM_SLED %{urlsr}/gem_sled.sr.html ) ;\
+        add GEM_SLED %{N} ;\
+        add GEM_SLED From log file: $+{_inputsrc}%{N} ;\
+        add GEM_SLED %{N}
+
+type= SingleWithSuppress
+context = [SYSLOG_LOG && GEM_SLED]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+).* Restoring state sled (\d+) element (\d+)
+desc= GEM RESTORING STATE SLED $2$3 $4 $5
+action= add GEM_SLED $0 ;\
+        lcall %o -> ( sub { ++$GEM_SLED_count; } )
+window=3600

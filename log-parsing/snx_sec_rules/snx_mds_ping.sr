@@ -1,0 +1,44 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports error from snx-mds-ping.log, reported by snx-mds-ping.py.
+# This check whether the MDS is still present and active.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   2013-12-13 12:43:16,119 ERROR: ssh to snx11001 failed
+#
+#/
+
+type= single
+continue=takenext
+context = [SNX_MDS_PING_LOG && !SNX_MDS_PING]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d,\d\d\d) ERROR: (.*)
+desc= SNX MDS PING
+action= create SNX_MDS_PING 60 (lcall %o -> (sub { $SNX_MDS_PING_count; }) ; if %o (report _THIS %cmd "%{subject}: %o MDS ping error" %list,%list_page)) ;\
+        lcall %o -> ( sub { $SNX_MDS_PING_count = 0; } ) ;\
+        add SNX_MDS_PING System:      %site %host, %mf ;\
+        add SNX_MDS_PING Filesystem:  all ;\
+        add SNX_MDS_PING Event:       MDS ping error. ;\
+        add SNX_MDS_PING Time:      $1 %Tmsg ;\
+        add SNX_MDS_PING %t  --  %tmsg2 ;\
+        add SNX_MDS_PING %{rule_info}snx_mds_ping.sr ;\
+        add SNX_MDS_PING %{N} ;\
+        add SNX_MDS_PING From log file: $+{_inputsrc}%{N} ;\
+        add SNX_MDS_PING %{N}
+
+type= SingleWithSuppress
+context = [SNX_MDS_PING_LOG && SNX_MDS_PING]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d,\d\d\d) ERROR: (.*)
+desc= SNX MDS PING $2
+action= add SNX_MDS_PING $0 ;\
+        lcall %o -> ( sub { ++$SNX_MDS_PING_count; } )
+window=900

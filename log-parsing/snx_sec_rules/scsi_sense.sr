@@ -1,0 +1,63 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of SCSI unhandled sense. Up to one email is sent
+# every minute, so errors can accumulate. Each error will be reported
+# once per hour until the underlying cause is fixed.
+#
+# Origin
+# ~~~~~~
+# From **syslog**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   Sep 18 18:18:37 snx11003n098 kernel: sd 9:0:66:0: [sdbm] Unhandled sense code
+#   Sep 18 18:18:37 snx11003n098 kernel: sd 9:0:66:0: [sdbm] Result: hostbyte=invalid driverbyte=DRIVER_SENSE
+#   Sep 18 18:18:37 snx11003n098 kernel: sd 9:0:66:0: [sdbm] Sense Key : Hardware Error [current]
+#   Sep 18 18:18:37 snx11003n098 kernel: sd 9:0:66:0: [sdbm] Add. Sense: No seek complete
+#   Sep 18 18:18:37 snx11003n098 kernel: sd 9:0:66:0: [sdbm] CDB: Read(10): 28 00 b0 25 89 50 00 00 08 00
+#   Sep 18 18:18:37 snx11003n098 kernel: end_request: critical target error, dev sdbm, sector 2955250000
+#
+# Corrective action
+# ~~~~~~~~~~~~~~~~~
+# A drive appears to be failing; it should be replaced.
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !SCSI_SENSE]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: (sd \d+:\d+:\d+:\d+: \[.*Unhandled sense code)
+desc= scsi sense
+action= create SCSI_SENSE 60 (lcall %o -> ( sub { return $SCSI_SENSE_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o SCSI sense error(s)" %list)) ;\
+        lcall %o -> ( sub { $SCSI_SENSE_count = 0; } ) ;\
+        add SCSI_SENSE System:      %site %host, %mf ;\
+        add SCSI_SENSE Filesystem:  all ;\
+        add SCSI_SENSE Event:       SCSI sense error(s). ;\
+        add SCSI_SENSE Time:      $1 %Tmsg ;\
+        add SCSI_SENSE %t  --  %tmsg2 ;\
+        add SCSI_SENSE %{rule_info}scsi_sense.sr ;\
+        if %urlsr ( add SCSI_SENSE %{urlsr}/scsi_sense.sr.html ) ;\
+        add SCSI_SENSE From log file: $+{_inputsrc}%{N} ;\
+        add SCSI_SENSE %{N}
+
+# Add a new sense to the list
+type= SingleWithSuppress
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_SENSE]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel: (sd \d+:\d+:\d+:\d+: \[.*)
+desc= scsi sense $1 $2 $3 $4
+action= add SCSI_SENSE $0 ;\
+        lcall %o $4 -> ( sub { if (index($_[0], "Unhandled sense code") != -1) { ++$SCSI_SENSE_count; } } )
+window=3600
+
+type= SingleWithSuppress
+ptype= RegExp
+context = [SYSLOG_LOG && SCSI_SENSE]
+pattern= (\d\d:\d\d:\d\d).*snx(\d.*)(n\d.*) kernel:.+ (critical target error)
+desc= scsi sense $1 $2 $3 $4
+action= add SCSI_SENSE $0
+window=3600

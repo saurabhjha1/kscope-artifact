@@ -1,0 +1,65 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Report instances of md disks recovery start and end.
+#
+# Origin
+# ~~~~~~
+# **/var/log/messages**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+# Sep  9 16:47:01 snx11100n015 kernel: md: md7: recovery done
+# <6>1 2014-09-09T05:12:36-05:00 snx11100n015 kernel - - -  md: recovery of RAID array md7
+#
+#   2013-03-11T17:16:27-05:00 snx11001n021 kernel: [4058387.916134] md: recovery of RAID array md128
+#   2013-03-11T17:16:30-05:00 snx11001n021 kernel: [4058391.045661] md: md128: recovery done.
+#   2013-03-11T17:16:30-05:00 snx11001n021 kernel: [4058391.053122] md: recovery of RAID array md132
+#   2013-03-11T17:16:32-05:00 snx11001n021 kernel: [4058393.519174] md: md132: recovery done.
+#   2013-03-11T17:16:32-05:00 snx11001n021 kernel: [4058393.525971] md: recovery of RAID array md129
+#   2013-03-11T17:16:34-05:00 snx11001n021 kernel: [4058395.580518] md: md129: recovery done.
+#   2013-03-11T17:16:34-05:00 snx11001n021 kernel: [4058395.585310] md: recovery of RAID array md140
+#   2013-03-11T17:16:36-05:00 snx11001n021 kernel: [4058397.672309] md: md140: recovery done.
+#   2013-03-11T17:16:36-05:00 snx11001n021 kernel: [4058397.677011] md: recovery of RAID array md137
+#   2013-03-11T17:16:39-05:00 snx11001n021 kernel: [4058400.254845] md: md137: recovery done.
+#   2013-03-11T17:16:39-05:00 snx11001n021 kernel: [4058400.261890] md: recovery of RAID array md136
+#   2013-03-11T17:16:41-05:00 snx11001n021 kernel: [4058402.365067] md: md136: recovery done.
+#   2013-03-11T17:16:41-05:00 snx11001n021 kernel: [4058402.370912] md: recovery of RAID array md133
+#   2013-03-11T17:16:43-05:00 snx11001n021 kernel: [4058404.430940] md: md133: recovery done.
+#   2013-03-11T17:16:43-05:00 snx11001n021 kernel: [4058404.439149] md: recovery of RAID array md141
+#   2013-03-11T17:16:46-05:00 snx11001n021 kernel: [4058407.632915] md: md141: recovery done.
+#/
+
+# The first rule is only run if the "context" doesn't already exist.
+# The 2nd rule is run only if it does exist, in order to aggregate multiple
+# such events into one email.  Wait 60 seconds before reporting these
+# events, so they can be aggregated into one email.
+
+
+type= Single
+continue= takenext
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*md:\s(recovery\sof\sRAID\sarray|md\d+:\srecovery\sdone)
+context= !MD_RECOVERY_$2$3
+desc= Raid recovery
+action= create MD_RECOVERY_$2$3 60 (lcall %mdrecovery_count $2$3 -> ( sub { return $MD_RECOVERY_count{$_[0]}; } ) ; if %mdrecovery_count (report _THIS %cmd "%{subject}$2$3: %mdrecovery_count md recovery event(s)" %list));\
+        lcall %mdrecovery_count $2$3 -> ( sub { $MD_RECOVERY_count{$_[0]} = 0; } ) ;\
+        add MD_RECOVERY_$2$3 System:      %site %host, %mf ;\
+        add MD_RECOVERY_$2$3 Filesystem:  %{fs}$2 ;\
+        add MD_RECOVERY_$2$3 Time:        $1 %Tmsg ;\
+        add MD_RECOVERY_$2$3 %t  --  %tmsg ;\
+        add MD_RECOVERY_$2$3 %{rule_info}md_recovery.sr ;\
+        add MD_RECOVERY_$2$3 %{N} ;\
+        add MD_RECOVERY_$2$3 From log file: $+{_inputsrc}%{N} ;\
+        add MD_RECOVERY_$2$3 %{N}
+
+
+type= Single
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\skernel.*md:\s(recovery\sof\sRAID\sarray|md\d+:\srecovery\sdone)
+desc= Raid recovery %{fs}$2$3 $4
+context= MD_RECOVERY_$2$3
+action= add MD_RECOVERY_$2$3 $1  %{fs}$2$3: $4 ;\
+        lcall %mdrecovery_count $2$3 -> ( sub { ++$MD_RECOVERY_count{$_[0]}; } )

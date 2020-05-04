@@ -1,0 +1,55 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of failed eth2 link (HA), linking two SSUs. Up to
+# one email is sent every minute, so errors can accumulate.
+#
+# Origin
+# ~~~~~~
+# From **/var/log/messages**
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# From a 1.4 system:
+# ::
+#
+#   Aug 26 05:49:08 snx11001n012 kernel: [226642.042455] e1000e: eth2 NIC Link is Down
+#   Aug 26 05:49:12 snx11001n012 kernel: [226645.423019] e1000e: eth2 NIC Link is Up 100 Mbps Full Duplex, Flow Control: Rx/Tx
+#
+# From a 1.2.1 system:
+# ::
+#
+#   Nov 23 05:01:33 snx11001n019 kernel: [85720.475501] igb: eth2 NIC Link is Down
+#/
+
+# Wait for 60 seconds before reporting the errors, so they can accumulate.
+type= Single
+continue=takenext
+context = [SYSLOG_LOG && !HA_ETH2]
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+) kernel: .*eth2 NIC Link is Down
+desc= eth2 is down
+action= create HA_ETH2 60 (lcall %o -> ( sub { return $HA_ETH2_count; } ) ; if %o (report _THIS %cmd "%{subject}: HA event: eth2 went down on %o node(s)" %list,%list_page)) ;\
+        lcall %o -> ( sub { $HA_ETH2_count = 0; } ) ;\
+        add HA_ETH2 System:      %site %host, %mf ;\
+        add HA_ETH2 Filesystem:  all ;\
+        add HA_ETH2 Event:       Eth2 went down. ;\
+        add HA_ETH2 Time:      $1 %Tmsg ;\
+        add HA_ETH2 %t  --  %tmsg2 ;\
+        add HA_ETH2 %{rule_info}ha_eth2.sr ;\
+        if %urlsr ( add HA_ETH2 %{urlsr}/ha_eth2.sr.html ) ;\
+        add HA_ETH2 From log file: $+{_inputsrc}%{N} ;\
+        add HA_ETH2 %{N}
+
+# Add a new HA event to the list.
+# Since we can get the same message from kern and messages, use the
+# suppress variant.
+type= SingleWithSuppress
+ptype= RegExp
+context = [SYSLOG_LOG && HA_ETH2]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+) kernel: .*eth2 NIC Link is Down
+desc= eth2 is down $2 $3
+action= add HA_ETH2 $0 ;\
+        lcall %o -> ( sub { ++$HA_ETH2_count; } )
+window= 50

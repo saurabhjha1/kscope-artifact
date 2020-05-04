@@ -1,0 +1,74 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Report when one or more OSTs are down. Each missing OST will be
+# reported every hour. If the *lfs check servers* commands timeout,
+# one email will be sent every hour.
+#
+# Origin
+# ~~~~~~
+# From **lfs_check_servers.log**
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+# ::
+#
+#   snx11001-OST0055-osc-ffff88063434c400: active
+#   snx11003-OST0402-osc-ffff880242e86c00: check error: Resource temporarily unavailable
+#
+# or
+#
+# ::
+#
+#   Command timedout after 5 seconds
+#/
+
+type= single
+continue=takenext
+context= [LFS_LOG && !LFS_CHECK]
+ptype= RegExp
+pattern= (snx\d+-[\w-]+): ((?!active).*)$
+desc= snx ost not active
+action= create LFS_CHECK 60 (lcall %o -> ( sub { return $LFS_CHECK_count; } ) ; if %o (report _THIS %cmd "%{subject}: %o OST(s) not active" %list,%list_page)) ;\
+		lcall %o -> ( sub { $LFS_CHECK_count = 0; } ) ;\
+        add LFS_CHECK System:      %site %host, %mf ;\
+        add LFS_CHECK Filesystem:  %{fs} ;\
+        add LFS_CHECK Event:       OST not active ;\
+        add LFS_CHECK Time:        %t ;\
+        add LFS_CHECK %t  --  %tmsg ;\
+        add LFS_CHECK %{rule_info}lfs_check.sr ;\
+		add LFS_CHECK %{N} ;\
+        add LFS_CHECK From log file: $+{_inputsrc}%{N} ;\
+		add LFS_CHECK %{N}
+
+# Create one context per bad target, with a lifetime of 1 hour, so we
+# don't repeat them.  If the context doesn't exist, we add another line
+# to the report.
+type=SingleWithSuppress
+context= [LFS_LOG && LFS_CHECK]
+ptype= RegExp
+pattern= (snx\d+-[\w-]+): ((?!active).*)$
+desc= ost not active $1
+action= add LFS_CHECK $0 ;\
+		lcall %o -> ( sub { ++$LFS_CHECK_count; } )
+window= 3600
+
+
+# Check whether the lfs command timedout. Warn only once per hour.
+type= SingleWithSuppress
+context= [LFS_LOG]
+ptype= RegExp
+pattern= Command timedout after (.*)
+desc= lfs check server timedout
+action= add LFS_CHECK_TO 1 hour %wmsg ;\
+        add LFS_CHECK_TO System:      %site %host, %mf ;\
+        add LFS_CHECK_TO Filesystem:  all ;\
+        add LFS_CHECK_TO Event:       lfs check server timedout ;\
+        add LFS_CHECK_TO %t  --  %tmsg ;\
+        add LFS_CHECK_TO %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+        add LFS_CHECK_TO %{rule_info}lfs_check.sr ;\
+        add LFS_CHECK_TO %note ;\
+        report LFS_CHECK_TO %cmd "%{subject}: lfs check server timedout" %list,%list_page ;\
+        delete LFS_CHECK_TO
+window=3600
+

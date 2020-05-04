@@ -1,0 +1,35 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports instances of ssh connection failures, usually to nodes
+# n000. An email is generated once a day per Sonexion.
+#
+# Origin
+# ~~~~~~
+# Any log.
+#
+# Instance of logged string
+# ~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# ::
+#
+#   Fri Feb 15 15:56:40 2013: ssh connection to admin@snx11001n000 failed
+#/
+
+type= SingleWithSuppress
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: ssh connection to .+@snx(\d+)(n\d+) failed
+desc= ssh fail $2
+action= add SSH_FAIL 1 day %wmsg ;\
+        add SSH_FAIL System:      %site %host, %mf ;\
+        add SSH_FAIL Filesystem:  %{fs}$2 ;\
+        add SSH_FAIL Event:       ssh failed to connect to %{fs}$2$3. ;\
+        add SSH_FAIL Time:      $1 %Tmsg ;\
+        add SSH_FAIL %t  --  %tmsg ;\
+        add SSH_FAIL %lmsg$+{_inputsrc}:%{N}%{umsg}%{N}$0 ;\
+        add SSH_FAIL %{rule_info}ssh_fail.sr ;\
+        if %urlsr ( add SSH_FAIL %{urlsr}/ssh_fail.sr.html ) ;\
+        add SSH_FAIL %note ;\
+        report SSH_FAIL %cmd "%{subject}$2: ssh failed to connect to %{fs}$2$3" %list ;\
+        delete SSH_FAIL
+window=86400

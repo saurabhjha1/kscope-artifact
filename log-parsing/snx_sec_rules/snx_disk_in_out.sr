@@ -1,0 +1,97 @@
+
+#/ Begin doc
+
+# Report disk removals or insertions.
+
+# Instances are aggregated over a two-minute rolling window, and all are
+# included in the one notification that is emailed out after two minutes
+# of no new occurrences.
+
+# Instances of logged strings in the syslog file:
+
+# 2013-02-22T14:32:24-06:00 snx11001n002 diskmonitor: Removed Device: 5000cca013079764, encl: 50050cc10c20258d, slot: 22
+
+# 2013-02-22T14:32:45-06:00 snx11001n001 diskmonitor: Inserted Device: 5000cca013050360, encl: 50050cc10c20258d, slot: 22
+
+#/ End doc
+
+
+# There are two pairs of rules here.  The first pair is for disks
+# "Removed", the 2nd for disks "Inserted".  The only different is in
+# their 'pattern'.  The reason the pattern cannot contain "(Removed|Inserted)
+# and thus use only one pair of rules is that it is not possible to have the
+# counting variables be independently named, e.g. %count_Removed
+# %count_Inserted in the lcall statement, e.g. "lcall %count_{$_[0]}".  That
+# syntax for lcall is not valid.
+
+# The "pattern" in the 2nd rule of both pairs of rules are the same as
+# the pattern in rule 1 of each pair.
+
+
+type= SingleWith2Thresholds
+continue= TakeNext
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdiskmonitor\:\s(Removed)\sDevice.*(\sslot.*)
+context= !$4_DISK_IN_OUT
+desc= disk $4
+action= lcall %count_disk_removed -> ( sub { $in_out_count_disk_removed = 0; } ) ;\
+	add $4_DISK_IN_OUT System:      %site %host, %mf ;\
+	add $4_DISK_IN_OUT Filesystem:  %{fs}$2 ;\
+	add $4_DISK_IN_OUT Event:       Disk drive $4$5 ;\
+	add $4_DISK_IN_OUT Time:      $1  %Tmsg ;\
+	add $4_DISK_IN_OUT %t  --  %tmsg ;\
+	add $4_DISK_IN_OUT Log file:%{N}---------%{N}%{host}:$+{_inputsrc}%{N} ;\
+	add $4_DISK_IN_OUT %{rule_info}snx_disk_in_out.sr ;\
+	add $4_DISK_IN_OUT %N ;\
+	add $4_DISK_IN_OUT Summary of disk $4 events:%{N}------------------------------- ;\
+	shellcmd /root/snx_sec/bin/open-disk-failure-case.sh -s %{fs}$2 -n $3
+window= 1
+thresh= 1
+desc2= Report summary disk interted or removed events
+action2= report $4_DISK_IN_OUT %cmd "%{subject}: %count_disk_removed Disks $4 ($1)" %list ;\
+	 delete $4_DISK_IN_OUT
+window2= 30
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdiskmonitor\:\s(Removed)\sDevice.*(\sslot.*)
+desc= count insert or remove actions
+action= lcall %count_disk_removed -> ( sub { ++$in_out_count_disk_removed; } ) ;\
+	add $4_DISK_IN_OUT $0
+
+
+# 2nd pair of rules, this pair for "Inserted" drives.
+
+type= SingleWith2Thresholds
+continue= TakeNext
+ptype= RegExp
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdiskmonitor\:\s(Inserted)\sDevice.*(\sslot.*)
+context= !$4_DISK_IN_OUT
+desc= disk $4
+action= lcall %count_disk_inserted -> ( sub { $in_out_count_disk_inserted = 0; } ) ;\
+	add $4_DISK_IN_OUT System:      %site %host, %mf ;\
+	add $4_DISK_IN_OUT Filesystem:  %{fs}$2 ;\
+	add $4_DISK_IN_OUT Event:       Disk drive $4$5 ;\
+	add $4_DISK_IN_OUT Time:      $1  %Tmsg ;\
+	add $4_DISK_IN_OUT %t  --  %tmsg ;\
+	add $4_DISK_IN_OUT Log file:%{N}---------%{N}%{host}:$+{_inputsrc}%{N} ;\
+	add $4_DISK_IN_OUT %{rule_info}snx_disk_in_out.sr ;\
+	add $4_DISK_IN_OUT %N ;\
+	add $4_DISK_IN_OUT Summary of disk $4 events:%{N}-------------------------------
+window= 1
+thresh= 1
+desc2= Report summary disk interted or removed events
+action2= report $4_DISK_IN_OUT %cmd "%{subject}: %count_disk_inserted Disks $4 ($1)" %list ;\
+	 delete $4_DISK_IN_OUT
+window2= 120
+thresh2= 0
+
+type= Single
+ptype= RegExp
+context= [SYSLOG_LOG]
+pattern= (\d\d:\d\d:\d\d).*snx(\d+)(n\d+)\sdiskmonitor\:\s(Inserted)\sDevice.*(\sslot.*)
+desc= count insert or remove actions
+action= lcall %count_disk_inserted -> ( sub { ++$in_out_count_disk_inserted; } ) ;\
+	add $4_DISK_IN_OUT $0

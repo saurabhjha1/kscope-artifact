@@ -1,0 +1,102 @@
+#/
+# What is reported
+# ~~~~~~~~~~~~~~~~
+# Reports the elements in enclosures in critical states. These are the
+# FRU, like fans or power supplies. The first time a failure happens,
+# it will be reported (with up to 1 email per minute for this class of
+# errors), then it will appear in the daily summary until the problem
+# is fixed. The problem is considered fixed if it doesn't appear again
+# for an hour.
+#
+# Origin
+# ~~~~~~
+# **lmmon-cscli_mon_elements.log**, generated from **lm-collect.py**.
+#
+# Instances of logged strings
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# v1.2
+# ::
+#
+#   Wed Apr 10 13:51:04 2013: Enclosure None at rack777-5U (snx11003n328, snx11003n329)  "FRU Power Supply Status":  CRITICAL  for 233d  1h 56m 45s  checked 2013-04-10 13:48:43  "There is an issue with one or more FRU's"
+#   Wed Apr 10 17:30:34 2013: Enclosure 5U84 at rack1-15U (snx11002n008, snx11002n009)  "FRU Fan Status":  WARNING  for 200d  2h 31m 22s  checked 2013-04-10 17:27:44  "There is an issue with one or more FRU's"
+#
+# v1.3
+# ::
+#
+#  snx11023n005-Enclosure-rack1-20U "FRU Fan Status": CRITICAL for 0d 0h 9m 12s checked 2013-09-27 15:20:56 "There is an issue with one or more FRU's"
+#  snx11023n005-Enclosure-rack1-20U "FRU Fan Status": WARNING for 0d 0h 12m 43s checked 2013-09-27 16:20:57 "There is an issue with one or more FRU's"
+#  snx11023n005-Enclosure-rack1-20U "FRU Fan Status": WARNING for 0d 0h 6m 24s checked 2013-09-27 16:50:58 "There is an issue with one or more FRU's" (flapping)
+#  snx11023n005-Enclosure-rack1-20U "FRU SBB Module Status": CRITICAL for 0d 0h 3m 49s checked 2013-09-30 11:07:04 "There is an issue with one or more FRU's"
+#/
+
+# To aggregate the errors in an email, create CRIT_FRU if it doesn't
+# exist, with a 60 seconds lifetime. If it already exists, just append
+# the message line.  If matched, pattern2 will clear the error.
+#
+# If the message doesn't appear again for 1 hour, then the error will be
+# cleared.
+
+# For NEO 1.2
+type=SingleWith2Thresholds
+context = [CSCLI_MON_ELEM_LOG]
+ptype=RegExp
+pattern= (\d\d:\d\d:\d\d) \d+: Enclosure .* at ([^)]+\))\s+(\"[^\"]+\"):\s+(WARNING|CRITICAL)
+desc= critical enclosure element $2 $3
+action= exists %x CRIT_FRU ;\
+        if %x ( none ) \
+        else ( create CRIT_FRU 60 (lcall %o -> (sub { $CRIT_FRU_count; }) ; report _THIS %cmd "%{subject}: %o Critical enclosure element(s) (NEW)" %list) ;\
+               lcall %o -> ( sub { $CRIT_FRU_count = 0; } ) ;\
+               add CRIT_FRU System:      %site %host, %mf ;\
+               add CRIT_FRU Filesystem:  all ;\
+               add CRIT_FRU Event:       Critical enclosure elements ;\
+               add CRIT_FRU Time:      $1 %Tmsg ;\
+               add CRIT_FRU %t  --  %tmsg ;\
+               add CRIT_FRU %{rule_info}cscli_fru.sr ;\
+               if %urlsr ( add CRIT_FRU %{urlsr}/cscli_fru.sr.html ) ;\
+               add CRIT_FRU %{N} ;\
+               add CRIT_FRU From log file: $+{_inputsrc}%{N} ;\
+               add CRIT_FRU %{N} ;\
+        ) ;\
+        add CRIT_FRU $0 ;\
+        lcall %o $2 $3 $0 -> ( sub { ++$CRIT_FRU_count; $crit_fru{$_[0] . $_[1]} = $_[2]; return undef; } )
+window=1
+thresh=1
+desc2= element $2 $3 not critical anymore
+action2= lcall %o $2 $3 $0 -> ( sub { --$CRIT_FRU_count; delete($crit_fru{$_[0] . $_[1]}); return undef; } )
+window2= 3600
+thresh2=0
+
+# Same as above for NEO 1.3
+#  - only the pattern and the action name differ
+
+# 2015-02-01T09:32:09-06:00 snx11023n005-Enclosure-rack1-20U "FRU Fan Status": CRITICAL for 0d 0h 9m 12s checked 2013-09-27 15:20:56 "There is an issue with one or more FRU's"
+#pattern= (\d\d:\d\d:\d\d).* (snx\d+n\d+-Enclosure-[^ ]+) (.*)(WARNING|CRITICAL)
+
+type=SingleWith2Thresholds
+context = [CSCLI_MON_ELEM_LOG]
+ptype=RegExp
+pattern= (\d\d:\d\d:\d\d).* (snx\d+n\d+-Enclosure-[^ ]+) (.*)(WARNING|CRITICAL)
+desc= critical enclosure element NEO 1.4 $2 $3 $4
+action= exists %x CRIT_FRU2 ;\
+        if %x ( none ) \
+        else ( create CRIT_FRU2 60 (lcall %o -> (sub { $CRIT_FRU2_count; }) ; report _THIS %cmd "%{subject}: %o Critical enclosure element(s) (NEW)" %list) ;\
+               lcall %o -> ( sub { $CRIT_FRU2_count = 0; } ) ;\
+               add CRIT_FRU2 System:      %site %host, %mf ;\
+               add CRIT_FRU2 Filesystem:  all ;\
+               add CRIT_FRU2 Event:       Critical enclosure elements ;\
+               add CRIT_FRU2 Time:      $1 %Tmsg ;\
+               add CRIT_FRU2 %t  --  %tmsg ;\
+               add CRIT_FRU2 %{rule_info}cscli_fru.sr ;\
+               if %urlsr ( add CRIT_FRU2 %{urlsr}/cscli_fru.sr.html ) ;\
+               add CRIT_FRU2 %{N} ;\
+               add CRIT_FRU2 From log file: $+{_inputsrc}%{N} ;\
+               add CRIT_FRU2 %{N} ;\
+        ) ;\
+        add CRIT_FRU2 $0 ;\
+        lcall %o $2 $3 $0 -> ( sub { ++$CRIT_FRU2_count; $crit_fru{$_[0] . $_[1]} = $_[2]; return undef; } )
+window=1
+thresh=1
+desc2= element $2 $3 not critical anymore
+action2= lcall %o $2 $3 $0 -> ( sub { --$CRIT_FRU2_count; delete($crit_fru{$_[0] . $_[1]}); return undef; } )
+window2= 3600
+thresh2=0
