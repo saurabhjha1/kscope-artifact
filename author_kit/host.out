@@ -1,0 +1,891 @@
+LC_PAPER=en_US.UTF-8
+LESSKEY=/etc/lesskey.bin
+MODULE_VERSION_STACK=3.2.10.4
+KSH_AUTOLOAD=1
+PE_LIBSCI_VOLATILE_PRGENV=CRAY GNU INTEL PGI
+PE_SMA_DEFAULT_PKGCONFIG_VARIABLES=PE_SMA_COMPFLAG_@prgenv@
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_mic_knl=160
+MANPATH=/opt/cray/ccm/default/man:/opt/cray/atp/2.0.4/man:/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/man:/opt/cray/pmi/5.0.14/man:/opt/cray/libsci/18.12.1/man:/opt/cray/man/csmlversion:/opt/gcc/6.3.0/snos/share/man:/sw/EasyBuild/software/wget/1.19.4/share/man:/sw/EasyBuild/software/cURL/7.59.0/share/man:/sw/user/man:/opt/moab/9.1.2/share/man/:/opt/torque/6.0.4/share/man:/opt/cray/mpt/7.7.4/gni/man/mpich:/opt/cray/craype/2.5.16/man:/opt/cray/eslogin/eswrap/1.3.3-1.020200.1280.0/man:/opt/modules/3.2.10.4/share/man:/opt/moab/9.1.2/share/man::ignore:/usr/local/man:/usr/share/man:/usr/man:/opt/cray/share/man:/cm/local/apps/environment-modules/3.2.6/man:/opt/cray/man:/u/sciteam/USER/man
+INFODIR=/usr/local/info:/usr/share/info:/usr/info
+NNTPSERVER=news
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_sandybridge=8.6
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_skylake=86
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_x86_skylake=160
+PE_CXX_PKGCONFIG_LIBS=mpichcxx
+PE_MPICH_GENCOMPILERS_PGI=15.3
+GNU_VERSION=6.3.0
+LC_ADDRESS=en_US.UTF-8
+XALT_ETC_DIR=/opt/xalt/0.7.6/sles11.3/etc
+PE_HDF5_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH
+MODIMP_KEEP_MODULE_LIST_IN_ENV=no
+LC_MONETARY=en_US.UTF-8
+HOSTNAME=h2ologin1
+CRAY_UDREG_INCLUDE_OPTS=-I/opt/cray/udreg/2.3.2-1.0502.10518.2.17.gem/include
+PE_FFTW_DEFAULT_TARGET_mic_knl=mic_knl
+PE_LIBSCI_ACC_DEFAULT_PKGCONFIG_VARIABLES=PE_LIBSCI_ACC_DEFAULT_NV_SUFFIX_@accelerator@
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_mic_knl=16.0
+PE_PETSC_DEFAULT_GENCOMPS_PGI_x86_64=1710
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_interlagos=160
+PE_TRILINOS_DEFAULT_GENCOMPS_CRAY_x86_64=87
+EBROOTGIT=/sw/EasyBuild/software/git/2.17.0
+XKEYSYMDB=/usr/share/X11/XKeysymDB
+CRAY_SITE_LIST_DIR=/etc/opt/cray/modules
+LIBRARYMODULES=/opt/modules/3.2.10.4/init/.librarymodules:acml:alps:cray-dwarf:cray-fftw:cray-ga:cray-hdf5:cray-hdf5-parallel:cray-libsci:cray-libsci_acc:cray-mpich:cray-mpich2:cray-mpich-abi:cray-netcdf:cray-netcdf-hdf5parallel:cray-parallel-netcdf:cray-petsc:cray-petsc-complex:cray-shmem:cray-tpsl:cray-trilinos:cudatoolkit:fftw:ga:hdf5:hdf5-parallel:iobuf:libfast:netcdf:netcdf-hdf5parallel:ntk:onesided:papi:petsc:petsc-complex:pmi:tpsl:trilinos:xt-libsci:xt-mpich2:xt-mpt:xt-papi:/etc/opt/cray/modules/site_librarymodules
+RCLOCAL_BASEOPTS=true
+PE_ACML_DEFAULT_DIR_GNU=gfortran64
+PE_NETCDF_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/netcdf/4.6.1.3/@PRGENV@/@PE_NETCDF_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_PARALLEL_NETCDF_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/parallel-netcdf/1.8.1.4/@PRGENV@/@PE_PARALLEL_NETCDF_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_SMA_DEFAULT_COMPFLAG_GNU=-fcray-pointer
+PE_TPSL_64_DEFAULT_GENCOMPS_PGI_x86_64=1710
+PE_TRILINOS_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/trilinos/12.12.1.1/@PRGENV@/@PE_TRILINOS_DEFAULT_GENCOMPS@/@PE_TRILINOS_DEFAULT_TARGET@/lib/pkgconfig
+PE_ACML_DEFAULT_DIR_DEFAULT64=_int64
+PE_ENV=GNU
+PE_HDF5_DEFAULT_GENCOMPILERS_GNU=8.2 7.1 6.1 5.3 4.9
+PE_MPICH_ALTERNATE_LIBS_dpm=_dpm
+PE_SMA_DEFAULT_COMPFLAG=
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.6
+EBDEVELOPENSSL=/sw/EasyBuild/software/OpenSSL/1.0.2m/easybuild/OpenSSL-1.0.2m-easybuild-devel
+CRAY_BOOST_VOLATILE_PKGCONFIG_PATH=/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/lib/pkgconfig
+SHELL=/bin/bash
+TERM=xterm-256color
+HOST=h2ologin1
+PE_ACML_DEFAULT_TARGET_interlagos=_fma4
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_x86_skylake=86
+PKGCONFIG_ENABLED=1
+HISTSIZE=1000
+PROFILEREAD=true
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_sandybridge=86
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_x86_skylake=8.2 7.1 6.1
+XTOS_VERSION=5.2.82
+SSH_CLIENT=66.253.183.235 62039 22
+CRAYPE_DIR=/opt/cray/craype/2.5.16
+CRAY_UGNI_POST_LINK_OPTS=-L/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64
+CRAY_XPMEM_POST_LINK_OPTS=-L/opt/cray/xpmem/0.1-2.0502.64982.5.3.gem/lib64
+PE_NETCDF_DEFAULT_VOLATILE_PRGENV=GNU
+PE_PARALLEL_NETCDF_DEFAULT_VOLATILE_PRGENV=GNU
+PE_PETSC_DEFAULT_GENCOMPS_GNU_haswell=82 53
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_haswell=160
+PE_PETSC_DEFAULT_GENCOMPS_PGI_interlagos=1710
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_x86_skylake=160
+PE_TPSL_DEFAULT_GENCOMPS_GNU_sandybridge=82 71 53 49
+PE_TPSL_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH:PE_LIBSCI
+PE_TRILINOS_DEFAULT_VOLATILE_PRGENV=CRAY GNU INTEL
+PE_MPICH_DIR_PGI_DEFAULT64=64
+PERL5LIB=/opt/moab/9.1.2/lib/perl5
+PE_ACML_DEFAULT_DIR_CRAY=gfortran64
+PE_FFTW_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/fftw/3.3.6.5/@PE_FFTW_DEFAULT_TARGET@/lib/pkgconfig
+PE_HDF5_DEFAULT_VOLATILE_PRGENV=GNU
+PE_HDF5_PARALLEL_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/hdf5-parallel/1.10.2.0/@PRGENV@/@PE_HDF5_PARALLEL_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_NETCDF_HDF5PARALLEL_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/netcdf-hdf5parallel/4.6.1.3/@PRGENV@/@PE_NETCDF_HDF5PARALLEL_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_PETSC_DEFAULT_GENCOMPILERS_PGI_x86_64=17.10
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_interlagos=86
+PE_TPSL_64_DEFAULT_GENCOMPILERS_PGI_interlagos=17.10
+CRAY_MPICH2_DIR=/opt/cray/mpt/7.7.4/gni/mpich-gnu/5.1
+ALT_LINKER=/opt/xalt/0.7.6/sles11.3/bin/ld
+XALT_DIR=/opt/xalt/0.7.6/sles11.3
+LIBRARY_PATH=/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/lib:/sw/EasyBuild/software/cURL/7.59.0/lib:/sw/EasyBuild/software/OpenSSL/1.0.2m/lib
+PE_GA_DEFAULT_VOLATILE_PRGENV=GNU
+PE_LIBSCI_DEFAULT_GENCOMPS_GNU_x86_64=81 71 51
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_interlagos=8.6
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_mic_knl=86
+LC_NUMERIC=en_US.UTF-8
+MORE=-sl
+FPATH=:/opt/modules/3.2.10.4/init/sh_funcs/no_redirect:/opt/modules/3.2.10.4/init/sh_funcs/no_redirect
+PE_LIBSCI_ACC_DEFAULT_GENCOMPS_CRAY_x86_64=83
+PE_LIBSCI_ACC_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH:PE_LIBSCI
+PE_MPICH_DEFAULT_GENCOMPILERS_GNU=8.2 7.1 5.1
+PE_PKGCONFIG_PRODUCTS=CRAY_BOOST:PE_LIBSCI:PE_MPICH
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_x86_64=160
+PE_MPICH_GENCOMPS_GNU=82 71 51
+MODIMP_ENABLE_DYNAMIC_PROMPT=no
+QTDIR=/usr/lib/qt3
+PE_PAPI_DEFAULT_ACCEL_LIBS_nvidia35=,-lcupti,-lcudart,-lcuda
+PE_PETSC_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH:PE_LIBSCI:PE_HDF5_PARALLEL:PE_TPSL
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_haswell=86
+PE_TPSL_64_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/tpsl/18.06.1/@PRGENV@64/@PE_TPSL_64_DEFAULT_GENCOMPS@/@PE_TPSL_64_DEFAULT_TARGET@/lib/pkgconfig
+PE_CRAY_DEFAULT_FIXED_PKGCONFIG_PATH=/opt/cray/parallel-netcdf/1.8.1.4/CRAY/8.6/lib/pkgconfig:/opt/cray/netcdf-hdf5parallel/4.6.1.3/CRAY/8.6/lib/pkgconfig:/opt/cray/netcdf/4.6.1.3/CRAY/8.6/lib/pkgconfig:/opt/cray/hdf5-parallel/1.10.2.0/CRAY/8.6/lib/pkgconfig:/opt/cray/hdf5/1.10.2.0/CRAY/8.6/lib/pkgconfig:/opt/cray/ga/5.3.0.7/CRAY/8.4/lib/pkgconfig
+PE_TRILINOS_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.7
+SSH_TTY=/dev/pts/56
+PE_LIBSCI_DEFAULT_OMP_REQUIRES_openmp=_mp
+PE_PETSC_DEFAULT_GENCOMPILERS_PGI_interlagos=17.10
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_x86_64=86
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_sandybridge=8.6
+PE_TPSL_64_DEFAULT_GENCOMPILERS_PGI_x86_64=17.10
+PE_FORTRAN_PKGCONFIG_LIBS=mpichf90
+LC_ALL=en_US.UTF-8
+PE_SMA_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/mpt/7.7.4/gni/sma@PE_SMA_DEFAULT_DIR_DEFAULT64@/lib64/pkgconfig
+ALLINEA_QUEUE_DLL=/opt/cray/mpt/7.7.4/gni/mpich-gnu/5.1/lib/libtvmpich.so.3.0.1
+PE_ACML_DEFAULT_DIR_INTEL=ifort64
+PE_LIBSCI_ACC_DEFAULT_VOLATILE_PRGENV=CRAY GNU
+PE_TRILINOS_DEFAULT_GENCOMPS_INTEL_x86_64=160
+CRAY_MPICH_BASEDIR=/opt/cray/mpt/7.7.4/gni
+EBROOTWGET=/sw/EasyBuild/software/wget/1.19.4
+USER=USER
+JRE_HOME=/usr/lib64/jvm/java/jre
+PE_ACML_DEFAULT_TARGET_x86_64=
+PE_HDF5_PARALLEL_DEFAULT_GENCOMPILERS_GNU=8.2 7.1 6.1 5.3 4.9
+PE_NETCDF_HDF5PARALLEL_DEFAULT_GENCOMPILERS_GNU=8.2 7.1 5.3
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_x86_skylake=86
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_haswell=160
+LC_TELEPHONE=en_US.UTF-8
+LS_COLORS=no=00:fi=00:di=01;34:ln=00;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=41;33;01:ex=00;32:*.cmd=00;32:*.exe=01;32:*.com=01;32:*.bat=01;32:*.btm=01;32:*.dll=01;32:*.tar=00;31:*.tbz=00;31:*.tgz=00;31:*.rpm=00;31:*.deb=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.lzma=00;31:*.zip=00;31:*.zoo=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.tb2=00;31:*.tz2=00;31:*.tbz2=00;31:*.avi=01;35:*.bmp=01;35:*.fli=01;35:*.gif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mng=01;35:*.mov=01;35:*.mpg=01;35:*.pcx=01;35:*.pbm=01;35:*.pgm=01;35:*.png=01;35:*.ppm=01;35:*.tga=01;35:*.tif=01;35:*.xbm=01;35:*.xpm=01;35:*.dl=01;35:*.gl=01;35:*.wmv=01;35:*.aiff=00;32:*.au=00;32:*.mid=00;32:*.mp3=00;32:*.ogg=00;32:*.voc=00;32:*.wav=00;32:
+PE_FFTW_DEFAULT_TARGET_interlagos=interlagos
+PE_LIBSCI_DEFAULT_VOLATILE_PRGENV=CRAY GNU INTEL PGI
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_interlagos=16.0
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_mic_knl=16.0
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_x86_64=86
+PE_TRILINOS_DEFAULT_GENCOMPILERS_GNU_x86_64=8.2 7.3 5.1
+PE_TRILINOS_DEFAULT_GENCOMPILERS_INTEL_x86_64=16.0
+LD_LIBRARY_PATH=/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/lib:/opt/gcc/6.3.0/snos/lib64:/sw/EasyBuild/software/OpenSSL/1.0.2m/lib:/u/sciteam/USER/usr/local/lib
+CRAY_RCA_POST_LINK_OPTS=-L/opt/cray/rca/1.0.0-2.0502.60530.1.63.gem/lib64 -lrca 
+PE_LIBSCI_PKGCONFIG_VARIABLES=PE_LIBSCI_OMP_REQUIRES_@openmp@:PE_SCI_EXT_LIBPATH:PE_SCI_EXT_LIBNAME
+PE_PETSC_DEFAULT_VOLATILE_PRGENV=CRAY CRAY64 GNU GNU64 INTEL INTEL64 PGI PGI64
+PE_PKGCONFIG_LIBS=boost:AtpSigHandler:cray-rca:libsci_mpi:libsci:mpich:gcc
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_sandybridge=8.2 7.1 5.3 4.9
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_haswell=16.0
+PE_MPICH_FIXED_PRGENV=INTEL
+XNLSPATH=/usr/share/X11/nls
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_mic_knl=8.6
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.6
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_skylake=16.0
+PE_PETSC_DEFAULT_GENCOMPS_GNU_interlagos=82 53
+PE_PETSC_DEFAULT_GENCOMPS_GNU_sandybridge=82 53
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_interlagos=160
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_sandybridge=160
+PE_TPSL_DEFAULT_GENCOMPS_GNU_haswell=82 71 53 49
+ENV=/etc/bash.bashrc
+MPICH_ABORT_ON_ERROR=1
+PE_LIBSCI_DEFAULT_GENCOMPS_CRAY_x86_64=86
+PE_PAPI_DEFAULT_PKGCONFIG_VARIABLES=PE_PAPI_ACCEL_LIBS_@accelerator@
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_haswell=8.6
+PE_PETSC_DEFAULT_GENCOMPS_GNU_mic_knl=53
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_mic_knl=160
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_interlagos=8.2 7.1 5.3 4.9
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_sandybridge=160
+MPICH_DIR=/opt/cray/mpt/7.7.4/gni/mpich-gnu/5.1
+EBVERSIONCURL=7.59.0
+CRAY_BOOST_INCLUDE_OPTS=-I/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/include
+HOSTTYPE=x86_64
+ATP_POST_LINK_OPTS=-Wl,-L/opt/cray/atp/2.0.4/libApp/ 
+PE_FFTW_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH
+PE_FFTW_DEFAULT_TARGET_sandybridge=sandybridge
+PE_HDF5_PARALLEL_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH
+PE_NETCDF_HDF5PARALLEL_DEFAULT_REQUIRED_PRODUCTS=PE_HDF5_PARALLEL
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_sandybridge=16.0
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_haswell=8.6
+PE_MPICH_FORTRAN_PKGCONFIG_LIBS=mpichf90
+CRAY_PRGENVGNU=loaded
+CPATH=/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/include
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_mic_knl=5.3
+RCLOCAL_PRGENV=true
+EBDEVELGIT=/sw/EasyBuild/software/git/2.17.0/easybuild/git-2.17.0-easybuild-devel
+FROM_HEADER=
+PE_LIBSCI_DEFAULT_GENCOMPILERS_INTEL_x86_64=16.0
+PE_LIBSCI_GENCOMPS_INTEL_x86_64=160
+PE_PRODUCT_LIST=CRAY_RCA:CRAY_ALPS:DVS:CRAY_XPMEM:CRAY_DMAPP:CRAY_PMI:CRAY_UGNI:CRAY_UDREG:CRAY_LIBSCI:GNU:GCC:CRAYPE:CRAYPE_INTERLAGOS:CRAY_BOOST
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.6
+PE_TPSL_DEFAULT_GENCOMPS_GNU_interlagos=82 71 53 49
+GCC_VERSION=6.3.0
+PAGER=less
+PE_MPICH_DEFAULT_GENCOMPS_PGI=153
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_x86_64=8.2 5.3
+PE_TPSL_DEFAULT_GENCOMPS_GNU_x86_skylake=82 71 61
+CRAY_MPICH_ROOTDIR=/opt/cray/mpt/7.7.4
+CSHEDIT=emacs
+PE_LIBSCI_GENCOMPILERS_GNU_x86_64=8.1 7.1 5.1
+PE_PETSC_DEFAULT_GENCOMPS_GNU_skylake=82 73
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_skylake=160
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_x86_64=16.0
+PE_MPICH_GENCOMPILERS_CRAY=8.6
+PE_MPICH_MODULE_NAME=cray-mpich
+XDG_CONFIG_DIRS=/etc/xdg
+PE_LIBSCI_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.6
+PE_LIBSCI_GENCOMPS_CRAY_x86_64=86
+PE_MPICH_DEFAULT_VOLATILE_PRGENV=CRAY GNU PGI
+PE_MPICH_TARGET_VAR_nvidia20=-lcudart
+PE_TPSL_64_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH:PE_LIBSCI
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_haswell=86
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_sandybridge=86
+MINICOM=-c on
+USERMODULES=/opt/modules/3.2.10.4/init/.usermodules:acml:alps:apprentice:apprentice2:atp:blcr:cce:chapel:cray-ccdb:cray-fftw:cray-ga:cray-hdf5:cray-hdf5-parallel:cray-lgdb:cray-libsci:cray-libsci_acc:cray-mpich:cray-mpich2:cray-mpich-compat:cray-netcdf:cray-netcdf-hdf5parallel:cray-parallel-netcdf:craypat:craype:cray-petsc:cray-petsc-complex:craypkg-gen:cray-shmem:cray-snplauncher:cray-tpsl:cray-trilinos:cudatoolkit:ddt:fftw:ga:gcc:hdf5:hdf5-parallel:intel:iobuf:java:lgdb:libfast:libsci_acc:mpich1:netcdf:netcdf-hdf5parallel:netcdf-nofsync:netcdf-nofsync-hdf5parallel:ntk:onesided:papi:parallel-netcdf:pathscale:perftools:perftools-lite:petsc:petsc-complex:pgi:pmi:PrgEnv-cray:PrgEnv-gnu:PrgEnv-intel:PrgEnv-pathscale:PrgEnv-pgi:stat:totalview:tpsl:trilinos:xt-asyncpe:xt-craypat:xt-lgdb:xt-libsci:xt-mpich2:xt-mpt:xt-papi:xt-shmem:xt-totalview:/etc/opt/cray/modules/site_usermodules
+CRAY_DMAPP_INCLUDE_OPTS=-I/opt/cray/dmapp/7.0.1-1.0502.11080.8.74.gem/include -I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.gem/include 
+CRAY_LIBSCI_BASE_DIR=/opt/cray/libsci/18.12.1
+CRAY_LIBSCI_DIR=/opt/cray/libsci/18.12.1
+DVS_VERSION=0.9.0
+PE_ACML_DEFAULT_DIR_PGI=pgi64
+PE_LIBSCI_ACC_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/libsci_acc/16.03.1/@PRGENV@/@PE_LIBSCI_ACC_DEFAULT_GENCOMPS@/@PE_LIBSCI_ACC_DEFAULT_TARGET@/lib/pkgconfig
+PE_LIBSCI_PKGCONFIG_LIBS=libsci_mpi:libsci
+PE_NETCDF_DEFAULT_GENCOMPS_GNU=
+PE_PARALLEL_NETCDF_DEFAULT_GENCOMPS_GNU=82 51
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_mic_knl=71 53
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_x86_64=82 71 53 49
+EBDEVELWGET=/sw/EasyBuild/software/wget/1.19.4/easybuild/wget-1.19.4-easybuild-devel
+MODIMP_AVAILABLE_MODULES=
+PATH=/opt/cray/ccm/default/sbin:/opt/cray/ccm/default/bin:/opt/cray/rca/1.0.0-2.0502.60530.1.63.gem/bin:/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/sbin:/opt/cray/dvs/2.5_0.9.0-1.0502.2188.1.113.gem/bin:/opt/cray/xpmem/0.1-2.0502.64982.5.3.gem/bin:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/bin:/opt/cray/udreg/2.3.2-1.0502.10518.2.17.gem/bin:/opt/gcc/6.3.0/bin:/sw/EasyBuild/software/wget/1.19.4/bin:/sw/EasyBuild/software/git/2.17.0/bin:/sw/EasyBuild/software/cURL/7.59.0/bin:/sw/EasyBuild/software/OpenSSL/1.0.2m/bin:/sw/admin/scripts:/sw/user/scripts:/opt/xalt/0.7.6/sles11.3/libexec:/opt/xalt/0.7.6/sles11.3/bin:/usr/local/openssh-7.5p1/bin:/usr/local/openssh-7.5p1/libexec:/opt/moab/9.1.2/sbin:/opt/torque/6.0.4/sbin:/opt/torque/6.0.4/bin:/opt/cray/mpt/7.7.4/gni/bin:/opt/cray/craype/2.5.16/bin:/opt/cray/eslogin/eswrap/1.3.3-1.020200.1280.0/bin:/opt/modules/3.2.10.4/bin:/opt/moab/9.1.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/X11R6/bin:/usr/games:/usr/lib/mit/bin:/usr/lib/mit/sbin:/usr/lib/qt3/bin:/opt/cray/bin:/u/sciteam/USER/bin
+MAIL=/var/mail/USER
+MODULE_VERSION=3.2.10.4
+PE_HDF5_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/hdf5/1.10.2.0/@PRGENV@/@PE_HDF5_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_PKGCONFIG_DEFAULT_PRODUCTS=PE_TRILINOS:PE_TPSL_64:PE_TPSL:PE_PETSC:PE_PARALLEL_NETCDF:PE_NETCDF_HDF5PARALLEL:PE_NETCDF:PE_MPICH:PE_LIBSCI_ACC:PE_LIBSCI:PE_HDF5_PARALLEL:PE_HDF5:PE_GA:PE_FFTW:PE_ACML
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_x86_64=8.2 7.1 5.3 4.9
+PE_TPSL_DEFAULT_GENCOMPILERS_PGI_x86_64=17.10
+PE_TPSL_DEFAULT_GENCOMPS_CRAY_interlagos=86
+PE_MPICH_GENCOMPILERS_GNU=8.2 7.1 5.1
+LC_MESSAGES=en_US.UTF-8
+CPU=x86_64
+ESWRAP_LOGIN=login
+XTPE_NETWORK_TARGET=gemini
+ATP_IGNORE_SIGTERM=1
+PE_FFTW_DEFAULT_TARGET_abudhabi=abudhabi
+PE_LIBSCI_DEFAULT_GENCOMPS_PGI_x86_64=153
+PE_MPICH_DEFAULT_DIR_PGI_DEFAULT64=64
+PE_NETCDF_DEFAULT_GENCOMPILERS_GNU=8.2 7.1 5.3
+PE_PARALLEL_NETCDF_DEFAULT_GENCOMPILERS_GNU=8.2 5.1
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_mic_knl=86
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_x86_skylake=8.2 7.1 6.1
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_haswell=8.2 7.1 5.3 4.9
+_=/usr/bin/env
+SSH_SENDS_LOCALE=yes
+JAVA_BINDIR=/usr/lib64/jvm/java/bin
+PE_HDF5_PARALLEL_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_HDF5_PARALLEL_DEFAULT_GENCOMPS_GNU=
+PE_NETCDF_HDF5PARALLEL_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_NETCDF_HDF5PARALLEL_DEFAULT_GENCOMPS_GNU=
+PE_SMA_DEFAULT_DIR_CRAY_DEFAULT64=64
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_x86_skylake=8.6
+LC_COLLATE=en_US.UTF-8
+LC_IDENTIFICATION=en_US.UTF-8
+CRAY_UDREG_POST_LINK_OPTS=-L/opt/cray/udreg/2.3.2-1.0502.10518.2.17.gem/lib64
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_sandybridge=86
+PE_TPSL_64_DEFAULT_VOLATILE_PRGENV=CRAY CRAY64 GNU GNU64 INTEL INTEL64 PGI PGI64
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_mic_knl=8.6
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_interlagos=160
+PWD=/u/sciteam/USER
+INPUTRC=/u/sciteam/USER/.inputrc
+CRAYPE_VERSION=2.5.16
+CRAY_ALPS_POST_LINK_OPTS=-L/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/lib64
+PE_TPSL_DEFAULT_GENCOMPS_GNU_mic_knl=71 53
+PE_MPICH_VOLATILE_PRGENV=CRAY GNU PGI
+EBROOTOPENSSL=/sw/EasyBuild/software/OpenSSL/1.0.2m
+JAVA_HOME=/usr/lib64/jvm/java
+TARGETMODULES=/opt/modules/3.2.10.4/init/.targetmodules:craype-abudhabi:craype-abudhabi-cu:craype-accel-host:craype-accel-nvidia20:craype-accel-nvidia30:craype-accel-nvidia35:craype-barcelona:craype-broadwell:craype-haswell:craype-hugepages128K:craype-hugepages128M:craype-hugepages16M:craype-hugepages256M:craype-hugepages2M:craype-hugepages32M:craype-hugepages4M:craype-hugepages512K:craype-hugepages512M:craype-hugepages64M:craype-hugepages8M:craype-intel-knc:craype-interlagos:craype-interlagos-cu:craype-istanbul:craype-ivybridge:craype-mc12:craype-mc8:craype-mic-knl:craype-network-aries:craype-network-gemini:craype-network-infiniband:craype-network-none:craype-network-seastar:craype-sandybridge:craype-shanghai:craype-target-compute_node:craype-target-local_host:craype-target-native:craype-xeon:xtpe-barcelona:xtpe-interlagos:xtpe-interlagos-cu:xtpe-istanbul:xtpe-mc12:xtpe-mc8:xtpe-network-gemini:xtpe-network-seastar:xtpe-shanghai:xtpe-target-native:xtpe-xeon:/etc/opt/cray/modules/site_targetmodules
+_LMFILES_=/opt/modulefiles/modules/3.2.10.4:/opt/modulefiles/eswrap/1.3.3-1.020200.1280.0:/opt/modulefiles/gcc/6.3.0:/opt/cray/craype/2.5.16/modulefiles/craype-interlagos:/opt/cray/craype/2.5.16/modulefiles/craype-network-gemini:/opt/cray/modulefiles/craype/2.5.16:/opt/cray/modulefiles/cray-mpich/7.7.4:/opt/modulefiles/torque/6.0.4:/opt/modulefiles/moab/9.1.2-sles11:/usr/local/modulefiles/openssh/7.5p1:/opt/modulefiles/xalt/0.7.6.local:/sw/xe/modulefiles/scripts:/sw/EasyBuild/modules/all/OpenSSL/1.0.2m:/sw/EasyBuild/modules/all/cURL/7.59.0:/sw/EasyBuild/modules/all/git/2.17.0:/sw/EasyBuild/modules/all/wget/1.19.4:/sw/xe/modulefiles/user-paths:/opt/cray/modulefiles/cray-libsci/18.12.1:/opt/cray/gem/modulefiles/udreg/2.3.2-1.0502.10518.2.17.gem:/opt/cray/gem/modulefiles/ugni/6.0-1.0502.10863.8.28.gem:/opt/cray/modulefiles/pmi/5.0.14:/opt/cray/gem/modulefiles/dmapp/7.0.1-1.0502.11080.8.74.gem:/opt/cray/gem/modulefiles/gni-headers/4.0-1.0502.10859.7.8.gem:/opt/cray/gem/modulefiles/xpmem/0.1-2.0502.64982.5.3.gem:/opt/cray/gem/modulefiles/dvs/2.5_0.9.0-1.0502.2188.1.113.gem:/opt/cray/gem/modulefiles/alps/5.2.4-2.0502.9774.31.12.gem:/opt/cray/gem/modulefiles/rca/1.0.0-2.0502.60530.1.63.gem:/opt/cray/modulefiles/atp/2.0.4:/opt/cray/modulefiles/PrgEnv-gnu/5.2.82:/opt/cray/modulefiles/ccm/2.2.1-1.0502.62540.4.51:/sw/xe/modulefiles/boost/1.63.0
+PE_LIBSCI_DEFAULT_OMP_REQUIRES=
+PE_MPICH_DEFAULT_GENCOMPS_CRAY=86
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_sandybridge=8.2 5.3
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_haswell=16.0
+XALT_TRANSMISSION_STYLE=directdb
+PE_LIBSCI_ACC_DEFAULT_NV_SUFFIX_nvidia20=nv20
+PE_LIBSCI_MODULE_NAME=cray-libsci/18.12.1
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_skylake=8.6
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_interlagos=8.6
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_mic_knl=7.1 5.3
+LANG=en_US.UTF-8
+PE_LIBSCI_DEFAULT_GENCOMPILERS_PGI_x86_64=15.3
+PE_LIBSCI_GENCOMPS_PGI_x86_64=153
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_x86_skylake=82 71 61
+PE_INTEL_FIXED_PKGCONFIG_PATH=/opt/cray/mpt/7.7.4/gni/mpich-intel/16.0/lib/pkgconfig
+MOABHOMEDIR=/var/spool/moab
+PYTHONSTARTUP=/etc/pythonstart
+MODULEPATH=/sw/EasyBuild/modules/all:/sw/bw/modulefiles:/sw/xe/modulefiles:/usr/local/modulefiles:/opt/cray/craype/2.5.16/modulefiles:/opt/cray/modulefiles:/opt/modulefiles:/opt/cray/gem/modulefiles:/u/sciteam/USER/soft/apps/spark/2.1.1//modulefiles
+PE_ACML_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/acml/5.3.1/@PE_ACML_DEFAULT_DIR@@PE_ACML_DEFAULT_TARGET@@PE_ACML_DEFAULT_DIR_OPENMP@@PE_ACML_DEFAULT_DIR_DEFAULT64@/lib/pkgconfig
+PE_LIBSCI_GENCOMPILERS_CRAY_x86_64=8.6
+PE_MPICH_NV_LIBS_nvidia20=-lcudart
+PE_MPICH_VOLATILE_PKGCONFIG_PATH=/opt/cray/mpt/7.7.4/gni/mpich-@PRGENV@@PE_MPICH_DIR_DEFAULT64@/@PE_MPICH_GENCOMPS@/lib/pkgconfig
+CRAY_BOOST_DIR=/sw/xe/boost/1.63.0
+LC_MEASUREMENT=en_US.UTF-8
+SDK_HOME=/usr/lib64/jvm/java
+LOADEDMODULES=modules/3.2.10.4:eswrap/1.3.3-1.020200.1280.0:gcc/6.3.0:craype-interlagos:craype-network-gemini:craype/2.5.16:cray-mpich/7.7.4:torque/6.0.4:moab/9.1.2-sles11:openssh/7.5p1:xalt/0.7.6.local:scripts:OpenSSL/1.0.2m:cURL/7.59.0:git/2.17.0:wget/1.19.4:user-paths:cray-libsci/18.12.1:udreg/2.3.2-1.0502.10518.2.17.gem:ugni/6.0-1.0502.10863.8.28.gem:pmi/5.0.14:dmapp/7.0.1-1.0502.11080.8.74.gem:gni-headers/4.0-1.0502.10859.7.8.gem:xpmem/0.1-2.0502.64982.5.3.gem:dvs/2.5_0.9.0-1.0502.2188.1.113.gem:alps/5.2.4-2.0502.9774.31.12.gem:rca/1.0.0-2.0502.60530.1.63.gem:atp/2.0.4:PrgEnv-gnu/5.2.82:ccm/2.2.1-1.0502.62540.4.51:boost/1.63.0
+SHMEM_ABORT_ON_ERROR=1
+CRAY_DMAPP_POST_LINK_OPTS=-L/opt/cray/dmapp/7.0.1-1.0502.11080.8.74.gem/lib64
+PE_FFTW_DEFAULT_TARGET_ivybridge=ivybridge
+PE_FFTW_DEFAULT_TARGET_share=share
+PE_FFTW_DEFAULT_TARGET_x86_skylake=x86_skylake
+PE_PKG_CONFIG_PATH=/opt/cray/cti/1.0.4/lib/pkgconfig
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_interlagos=82 71 53 49
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_mic_knl=16.0
+PE_TPSL_DEFAULT_GENCOMPS_PGI_x86_64=1710
+CRAY_RCA_INCLUDE_OPTS=-I/opt/cray/rca/1.0.0-2.0502.60530.1.63.gem/include -I/opt/cray/krca/1.0.0-2.0502.63139.4.30.gem/include -I/opt/cray-hss-devel/7.2.0/include 
+PE_LIBSCI_OMP_REQUIRES_openmp=_mp
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_skylake=8.2 7.3
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_x86_skylake=8.6
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_mic_knl=86
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_x86_64=16.0
+CRAY_MPICH_DIR=/opt/cray/mpt/7.7.4/gni/mpich-gnu/5.1
+PE_MPICH_CXX_PKGCONFIG_LIBS=mpichcxx
+PE_LIBSCI_ACC_DEFAULT_GENCOMPILERS_GNU_x86_64=4.9
+PE_LIBSCI_DEFAULT_GENCOMPS_INTEL_x86_64=160
+PE_MPICH_PKGCONFIG_VARIABLES=PE_MPICH_NV_LIBS_@accelerator@:PE_MPICH_ALTERNATE_LIBS_@multithreaded@:PE_MPICH_ALTERNATE_LIBS_@dpm@
+LM_LICENSE_FILE=1701@bwlm1.ncsa.illinois.edu:1701@bwlm2.ncsa.illinois.edu:1703@bwlm1.ncsa.illinois.edu:1703@bwlm2.ncsa.illinois.edu:1705@bwlm1.ncsa.illinois.edu:1705@bwlm2.ncsa.illinois.edu:1707@bwlm1.ncsa.illinois.edu:1707@bwlm2.ncsa.illinois.edu
+KRB5CCNAME=FILE:/tmp/krb5cc_48234_sNrEIu
+CRAY_PMI_POST_LINK_OPTS=-L/opt/cray/pmi/5.0.14/lib64
+PE_HDF5_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_TPSL_64_DEFAULT_GENCOMPILERS_CRAY_mic_knl=8.6
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_x86_skylake=16.0
+PE_TPSL_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/tpsl/18.06.1/@PRGENV@/@PE_TPSL_DEFAULT_GENCOMPS@/@PE_TPSL_DEFAULT_TARGET@/lib/pkgconfig
+CRAY_MPICH2_VER=7.7.4
+PE_MPICH_PKGCONFIG_LIBS=mpich
+PE_GA_DEFAULT_GENCOMPILERS_GNU=5.1 4.9
+PE_LIBSCI_ACC_DEFAULT_GENCOMPS_GNU_x86_64=49
+PE_LIBSCI_VOLATILE_PKGCONFIG_PATH=/opt/cray/libsci/18.12.1/@PRGENV@/@PE_LIBSCI_GENCOMPS@/@PE_LIBSCI_TARGET@/lib/pkgconfig
+PE_MPICH_ALTERNATE_LIBS_multithreaded=_mt
+PE_NETCDF_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_PARALLEL_NETCDF_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_TPSL_DEFAULT_GENCOMPS_PGI_interlagos=1710
+HOME=/u/sciteam/USER
+SHLVL=2
+JDK_HOME=/usr/lib64/jvm/java
+QT_SYSTEM_DIR=/usr/share/desktop-data
+CRAY_LIBSCI_VERSION=18.12.1
+PE_HDF5_PARALLEL_DEFAULT_VOLATILE_PRGENV=GNU
+PE_MPICH_TARGET_VAR_nvidia35=-lcudart
+PE_NETCDF_HDF5PARALLEL_DEFAULT_VOLATILE_PRGENV=GNU
+PE_PKGCONFIG_PRODUCTS_DEFAULT=PE_PAPI
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_haswell=82 71 53 49
+EBVERSIONGIT=2.17.0
+OSTYPE=linux
+LESS_ADVANCED_PREPROCESSOR=no
+PE_LIBSCI_GENCOMPILERS_PGI_x86_64=15.3
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_interlagos=16.0
+CURL_INCLUDES=/sw/EasyBuild/software/cURL/7.59.0/include
+PE_ACML_DEFAULT_DIR_OPENMP=_mp
+PE_MPICH_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/mpt/7.7.4/gni/mpich-@PRGENV@@PE_MPICH_DEFAULT_DIR_DEFAULT64@/@PE_MPICH_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_PETSC_DEFAULT_GENCOMPILERS_CRAY_interlagos=8.6
+PE_TPSL_DEFAULT_VOLATILE_PRGENV=CRAY CRAY64 GNU GNU64 INTEL INTEL64 PGI PGI64
+EBDEVELCURL=/sw/EasyBuild/software/cURL/7.59.0/easybuild/cURL-7.59.0-easybuild-devel
+XCURSOR_THEME=
+LS_OPTIONS=-N --color=none -T 0
+CRAY_PMI_INCLUDE_OPTS=-I/opt/cray/pmi/5.0.14/include
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_interlagos=86
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_sandybridge=160
+PRGENVMODULES=/opt/modules/3.2.10.4/init/.prgenvmodules:PrgEnv-cray:PrgEnv-gnu:PrgEnv-intel:PrgEnv-pathscale:PrgEnv-pgi
+CRAYPE_NETWORK_TARGET=gemini
+ATP_MRNET_COMM_PATH=/opt/cray/atp/2.0.4/libexec/atp_mrnet_commnode_wrapper
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_haswell=8.6
+PKG_CONFIG_PATH_DEFAULT=/opt/cray/papi/5.5.0.1/lib64/pkgconfig
+PE_MPICH_DIR_CRAY_DEFAULT64=64
+GCC_PATH=/opt/gcc/6.3.0
+PE_PAPI_DEFAULT_TARGET_VAR_nvidia35=,-lcupti,-lcudart,-lcuda
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_haswell=8.2 5.3
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_mic_knl=7.1 5.3
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_interlagos=8.2 7.1 5.3 4.9
+PE_TPSL_DEFAULT_GENCOMPILERS_INTEL_sandybridge=16.0
+PE_TPSL_DEFAULT_GENCOMPILERS_PGI_interlagos=17.10
+EBVERSIONWGET=1.19.4
+LOGNAME=USER
+MACHTYPE=x86_64-suse-linux
+LESS=-M -I
+G_FILENAME_ENCODING=@locale,UTF-8,ISO-8859-15,CP1252
+CRAY_GNI_HEADERS_INCLUDE_OPTS=-I/opt/cray/gni-headers/4.0-1.0502.10859.7.8.gem/include
+CRAY_LIBSCI_PREFIX_DIR=/opt/cray/libsci/18.12.1/GNU/5.1/x86_64
+PE_HDF5_DEFAULT_GENCOMPS_GNU=
+PE_MPICH_NV_LIBS=
+PE_NETCDF_DEFAULT_REQUIRED_PRODUCTS=PE_HDF5
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_haswell=8.2 7.1 5.3 4.9
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_sandybridge=16.0
+PE_TPSL_DEFAULT_GENCOMPS_GNU_x86_64=82 71 53 49
+PE_TRILINOS_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH:PE_HDF5_PARALLEL:PE_NETCDF_HDF5PARALLEL:PE_LIBSCI:PE_TPSL
+PYTHONPATH=/opt/xalt/0.7.6/sles11.3/libexec
+EBROOTCURL=/sw/EasyBuild/software/cURL/7.59.0
+CVS_RSH=ssh
+DMAPP_ABORT_ON_ERROR=1
+PE_LIBSCI_OMP_REQUIRES=
+PE_MPICH_DEFAULT_GENCOMPILERS_CRAY=8.6
+PE_TRILINOS_DEFAULT_GENCOMPS_GNU_x86_64=82 73 51
+PE_MPICH_GENCOMPS_CRAY=86
+BOOST_ROOT=/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0
+LC_CTYPE=UTF-8
+SSH_CONNECTION=66.253.183.235 62039 141.142.176.129 22
+XDG_DATA_DIRS=/usr/share:/etc/opt/kde3/share:/opt/kde3/share
+TOOLMODULES=/opt/modules/3.2.10.4/init/.toolmodules:apprentice:apprentice2:atp:chapel:cray-lgdb:craypat:craypkg-gen:cray-snplauncher:ddt:gdb:iobuf:papi:perftools:perftools-lite:stat:totalview:xt-craypat:xt-lgdb:xt-papi:xt-totalview:/etc/opt/cray/modules/site_toolmodules
+DVS_INCLUDE_OPTS=-I/opt/cray/dvs/2.5_0.9.0-1.0502.2188.1.113.gem/include
+PE_LIBSCI_ACC_DEFAULT_GENCOMPILERS_CRAY_x86_64=8.3
+PE_LIBSCI_ACC_DEFAULT_NV_SUFFIX_nvidia35=nv35
+PE_LIBSCI_DEFAULT_REQUIRED_PRODUCTS=PE_MPICH
+PE_MPICH_DEFAULT_FIXED_PRGENV=INTEL
+PE_MPICH_DEFAULT_GENCOMPS_GNU=82 71 51
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_interlagos=16.0
+PE_TPSL_DEFAULT_GENCOMPILERS_CRAY_sandybridge=8.6
+MODULESHOME=/opt/modules/3.2.10.4
+PE_GA_DEFAULT_FIXED_PRGENV=CRAY PGI INTEL
+PE_LIBSCI_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/libsci/18.12.1/@PRGENV@/@PE_LIBSCI_DEFAULT_GENCOMPS@/@PE_LIBSCI_DEFAULT_TARGET@/lib/pkgconfig
+PE_TPSL_DEFAULT_GENCOMPILERS_GNU_sandybridge=8.2 7.1 5.3 4.9
+LESSOPEN=lessopen.sh %s
+PE_MPICH_NV_LIBS_nvidia35=-lcudart
+PE_PETSC_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/petsc/3.9.3.0/complex/@PRGENV@/@PE_PETSC_DEFAULT_GENCOMPS@/@PE_PETSC_DEFAULT_TARGET@/lib/pkgconfig
+PKG_CONFIG_PATH=/opt/gcc/6.3.0/pkg-config:/sw/EasyBuild/software/cURL/7.59.0/lib/pkgconfig:/sw/EasyBuild/software/OpenSSL/1.0.2m/lib/pkgconfig:/opt/cray/rca/1.0.0-2.0502.60530.1.63.gem/lib64/pkgconfig:/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/lib64/pkgconfig:/opt/cray/xpmem/0.1-2.0502.64982.5.3.gem/lib64/pkgconfig:/opt/cray/gni-headers/4.0-1.0502.10859.7.8.gem/lib64/pkgconfig:/opt/cray/dmapp/7.0.1-1.0502.11080.8.74.gem/lib64/pkgconfig:/opt/cray/pmi/5.0.14/lib64/pkgconfig:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64/pkgconfig:/opt/cray/udreg/2.3.2-1.0502.10518.2.17.gem/lib64/pkgconfig:/opt/cray/craype/2.5.16/pkg-config:/opt/cray/iobuf/2.0.7/lib/pkgconfig:/opt/cray/atp/2.0.4/lib/pkgconfig
+PELOCAL_PRGENV=true
+LIBSCI_BASE_DIR=/opt/cray/libsci/18.12.1
+PE_TPSL_64_DEFAULT_GENCOMPS_INTEL_x86_64=160
+INFOPATH=/opt/gcc/6.3.0/snos/share/info:/usr/local/info:/usr/share/info:/usr/info
+LIBSCI_VERSION=18.12.1
+PE_LIBSCI_DEFAULT_PKGCONFIG_VARIABLES=PE_LIBSCI_DEFAULT_OMP_REQUIRES_@openmp@:PE_SCI_EXT_LIBPATH:PE_SCI_EXT_LIBNAME
+PE_MPICH_NV_LIBS_nvidia60=-lcudart
+PE_TPSL_64_DEFAULT_GENCOMPS_GNU_sandybridge=82 71 53 49
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_mic_knl=160
+ACLOCAL_PATH=/sw/EasyBuild/software/cURL/7.59.0/share/aclocal
+CRAY_PRE_COMPILE_OPTS=-hnetwork=gemini
+CRAY_ALPS_INCLUDE_OPTS=-I/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/include
+PE_FFTW_DEFAULT_TARGET_broadwell=broadwell
+PE_LIBSCI_GENCOMPILERS_INTEL_x86_64=16.0
+PE_PGI_DEFAULT_FIXED_PKGCONFIG_PATH=/opt/cray/parallel-netcdf/1.8.1.4/PGI/17.10/lib/pkgconfig:/opt/cray/netcdf-hdf5parallel/4.6.1.3/PGI/17.10/lib/pkgconfig:/opt/cray/netcdf/4.6.1.3/PGI/17.10/lib/pkgconfig:/opt/cray/hdf5-parallel/1.10.2.0/PGI/17.10/lib/pkgconfig:/opt/cray/hdf5/1.10.2.0/PGI/17.10/lib/pkgconfig:/opt/cray/ga/5.3.0.7/PGI/15.3/lib/pkgconfig
+PE_TPSL_64_DEFAULT_GENCOMPILERS_GNU_x86_64=8.2 7.1 5.3 4.9
+CRAY_CPU_TARGET=interlagos
+CRAY_UGNI_INCLUDE_OPTS=-I/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/include
+CRAY_XPMEM_INCLUDE_OPTS=-I/opt/cray/xpmem/0.1-2.0502.64982.5.3.gem/include
+PE_LIBSCI_REQUIRED_PRODUCTS=PE_MPICH
+PE_MPICH_DEFAULT_GENCOMPILERS_PGI=15.3
+PE_TPSL_64_DEFAULT_GENCOMPS_CRAY_x86_64=86
+PE_MPICH_GENCOMPS_PGI=153
+PE_LIBSCI_DEFAULT_GENCOMPILERS_GNU_x86_64=8.1 7.1 5.1
+PE_LIBSCI_GENCOMPS_GNU_x86_64=81 71 51
+PE_TPSL_DEFAULT_GENCOMPS_INTEL_haswell=160
+LMOD_DIR=/opt/xalt/0.7.6/sles11.3
+CRAY_BOOST_VERSION=1.63.0
+LC_TIME=en_US.UTF-8
+LESSCLOSE=lessclose.sh %s %s
+ATP_HOME=/opt/cray/atp/2.0.4
+PE_FFTW_DEFAULT_TARGET_x86_64=x86_64
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_x86_64=16.0
+G_BROKEN_FILENAMES=1
+CRAYOS_VERSION=5.2.82
+CRAY_LD_LIBRARY_PATH=/opt/cray/rca/1.0.0-2.0502.60530.1.63.gem/lib64:/opt/cray/alps/5.2.4-2.0502.9774.31.12.gem/lib64:/opt/cray/xpmem/0.1-2.0502.64982.5.3.gem/lib64:/opt/cray/dmapp/7.0.1-1.0502.11080.8.74.gem/lib64:/opt/cray/pmi/5.0.14/lib64:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64:/opt/cray/udreg/2.3.2-1.0502.10518.2.17.gem/lib64:/opt/cray/libsci/18.12.1/GNU/5.1/x86_64/lib:/opt/cray/mpt/7.7.4/gni/mpich-gnu/5.1/lib
+PE_FFTW_DEFAULT_TARGET_haswell=haswell
+PE_GA_DEFAULT_GENCOMPS_GNU=51 49
+PE_GA_DEFAULT_VOLATILE_PKGCONFIG_PATH=/opt/cray/ga/5.3.0.7/@PRGENV@/@PE_GA_DEFAULT_GENCOMPS@/lib/pkgconfig
+PE_INTEL_DEFAULT_FIXED_PKGCONFIG_PATH=/opt/cray/parallel-netcdf/1.8.1.4/INTEL/18.0/lib/pkgconfig:/opt/cray/netcdf-hdf5parallel/4.6.1.3/INTEL/16.0/lib/pkgconfig:/opt/cray/netcdf/4.6.1.3/INTEL/16.0/lib/pkgconfig:/opt/cray/mpt/7.7.4/gni/mpich-intel/16.0/lib/pkgconfig:/opt/cray/hdf5-parallel/1.10.2.0/INTEL/16.0/lib/pkgconfig:/opt/cray/hdf5/1.10.2.0/INTEL/16.0/lib/pkgconfig:/opt/cray/ga/5.3.0.7/INTEL/15.0/lib/pkgconfig
+PE_PAPI_DEFAULT_ACCEL_LIBS=
+PE_PETSC_DEFAULT_GENCOMPILERS_GNU_interlagos=8.2 5.3
+PE_PETSC_DEFAULT_GENCOMPILERS_INTEL_haswell=16.0
+PE_SMA_DEFAULT_DIR_PGI_DEFAULT64=64
+PE_TPSL_64_DEFAULT_GENCOMPILERS_INTEL_x86_skylake=16.0
+CRAY_BOOST_POST_LINK_OPTS=-L/sw/xe/boost/1.63.0/sles11.3_gnu5.3.0/lib
+LC_NAME=en_US.UTF-8
+COLORTERM=1
+JAVA_ROOT=/usr/lib64/jvm/java
+PE_MPICH_DEFAULT_DIR_CRAY_DEFAULT64=64
+PE_PETSC_DEFAULT_GENCOMPS_CRAY_haswell=86
+PE_PETSC_DEFAULT_GENCOMPS_GNU_x86_64=82 53
+PE_PETSC_DEFAULT_GENCOMPS_INTEL_x86_64=160
+PE_TPSL_64_DEFAULT_GENCOMPS_PGI_interlagos=1710
+EBVERSIONOPENSSL=1.0.2m
+BASH_FUNC_modimp_tabcomplete_off()=() {  export MODIMP_AVAILABLE_MODULES="";
+ complete -r module;
+ rm -f /tmp/.modimp_available_${USER}_*
+}
+BASH_FUNC_modimp_module_to_stdout_on()=() {  if [ -f $HOME/.no_modimp ]; then
+ return;
+ fi;
+ if [ -f $HOME/.no_modimp_warning ]; then
+ echo "The file $HOME/.no_modimp_warning exists; modimp commands will not load.";
+ return;
+ fi;
+ function moduleraw () 
+ { 
+ eval `${MODULESHOME}/bin/modulecmd bash $*`
+ };
+ function module () 
+ { 
+ if [[ $1 == "purge" ]]; then
+ echo "";
+ echo "BEWARE: Running \"module purge\" puts your environment in an unreliable state.";
+ echo "Doing so makes it difficult to debug problems or for support staff to help";
+ echo "you. Please structure your build so that you don't have to do this.";
+ echo "";
+ fi;
+ if [[ $1 == "PrgEnvLoad" ]]; then
+ PRGMOD=`echo $LOADEDMODULES | tr ":" "\n" | grep PrgEnv`;
+ if [[ $PRGMOD == "" ]]; then
+ moduleraw load $2 $3 $4 $5 $6 2>&1;
+ return;
+ fi;
+ moduleraw swap $PRGMOD $2 $3 $4 $5 $6 2>&1;
+ return;
+ fi;
+ moduleraw $* 2>&1
+ };
+ export -f moduleraw;
+ export -f module
+}
+BASH_FUNC_autocomplete_modules()=() {  subcommands_list="load:add:show:display:available:unload:rm:list:swap:switch:use:unuse:PrgEnvLoad";
+ read -a command_line_array <<< "$COMP_LINE";
+ num_command_line_elements=${#command_line_array[@]};
+ if [[ $num_command_line_elements -eq 1 ]]; then
+ echo "load";
+ echo "add";
+ echo "show";
+ echo "display";
+ echo "available";
+ echo "unload";
+ echo "rm";
+ echo "list";
+ echo "swap";
+ echo "switch";
+ echo "use";
+ echo "unuse";
+ echo "PrgEnvLoad";
+ exit;
+ fi;
+ module_sub_command=${command_line_array[1]};
+ being_completed=$2;
+ being_completed_length=${#being_completed};
+ loaded_modules_array=$(echo $LOADEDMODULES | tr ":" "\n");
+ if [ $MODIMP_KEEP_MODULE_LIST_IN_ENV != "yes" ]; then
+ dated_modulefile_name="/tmp/.modimp_available_${USER}_`date +%Y_%m_%d`";
+ if [ ! -f ${dated_modulefile_name} ]; then
+ autocomplete_modules_setup;
+ fi;
+ read -r MODIMP_AVAILABLE_MODULES < ${dated_modulefile_name};
+ fi;
+ available_modules_array=$(echo $MODIMP_AVAILABLE_MODULES | tr ":" "\n");
+ case "$module_sub_command" in 
+ load | add | show | display | available | avail)
+ possible_completions_array=("${available_modules_array[@]}")
+ ;;
+ unload | rm | list)
+ possible_completions_array=("${loaded_modules_array[@]}")
+ ;;
+ PrgEnvLoad)
+ PrgEnv_array=$(echo $MODIMP_AVAILABLE_MODULES | tr ":" "\n" | grep PrgEnv);
+ possible_completions_array=("${PrgEnv_array[@]}")
+ ;;
+ swap | switch)
+ case "$num_command_line_elements" in 
+ 2)
+ possible_completions_array=("${loaded_modules_array[@]}")
+ ;;
+ 4)
+ possible_completions_array=("${available_modules_array[@]}")
+ ;;
+ 3)
+ if [[ $being_completed_length -eq 0 ]]; then
+ initial_completions_array=("${available_modules_array[@]}");
+ raw_module_to_be_swapped=${command_line_array[2]};
+ position_of_slash=$(echo $raw_module_to_be_swapped | grep -b -o "/" | awk 'BEGIN {FS=":"}{print $1}');
+ second_completions_array="";
+ if [[ $position_of_slash -gt 0 ]]; then
+ base_module_length=$position_of_slash;
+ else
+ base_module_length=${#raw_module_to_be_swapped};
+ fi;
+ module_name_prefix=${raw_module_to_be_swapped:0:6};
+ if [[ $module_name_prefix == "PrgEnv" ]]; then
+ base_module_length=6;
+ fi;
+ base_module_to_be_swapped=${raw_module_to_be_swapped:0:base_module_length};
+ version_length=${#raw_module_to_be_swapped}-position_of_slash-1;
+ for comp in $initial_completions_array;
+ do
+ match_string=${comp:0:base_module_length};
+ if [ $match_string == $base_module_to_be_swapped ]; then
+ second_completions_array+=$comp;
+ second_completions_array+=":";
+ fi;
+ done;
+ possible_completions_array=$(echo $second_completions_array | tr ":" "\n");
+ else
+ possible_completions_array=("${loaded_modules_array[@]}");
+ fi
+ ;;
+ esac
+ ;;
+ use | unuse)
+ dir_completions=(`ls -1 -d -p ${being_completed}* 2>/dev/null`);
+ num_possible=${#dir_completions[@]};
+ blah="\t";
+ if (( num_possible == 1 )); then
+ echo ${dir_completions[0]};
+ echo ${dir_completions[0]}$blah;
+ else
+ for item in "${dir_completions[@]}";
+ do
+ echo $item;
+ done;
+ fi;
+ return
+ ;;
+ *)
+ if [[ $3 == "module" ]]; then
+ possible_completions_array=$(echo $subcommands_list | tr ":" "\n");
+ fi
+ ;;
+ esac;
+ if [[ $being_completed_length -eq 0 ]]; then
+ for x in $possible_completions_array;
+ do
+ echo "$x";
+ done;
+ else
+ for x in $possible_completions_array;
+ do
+ match_string=${x:0:being_completed_length};
+ if [ $match_string == $being_completed ]; then
+ echo "$x";
+ fi;
+ cray_prepended_length=$(($being_completed_length+5));
+ cray_prepended_match_string=${x:0:cray_prepended_length};
+ cray_prepended_being_completed="cray-";
+ cray_prepended_being_completed+=$being_completed;
+ if [ $cray_prepended_match_string == $cray_prepended_being_completed ]; then
+ echo "$x";
+ fi;
+ craype_prepended_length=$(($being_completed_length+7));
+ craype_prepended_match_string=${x:0:craype_prepended_length};
+ craype_prepended_being_completed="craype-";
+ craype_prepended_being_completed+=$being_completed;
+ if [ $craype_prepended_match_string == $craype_prepended_being_completed ]; then
+ echo "$x";
+ fi;
+ xt_prepended_length=$(($being_completed_length+3));
+ xt_prepended_match_string=${x:0:xt_prepended_length};
+ xt_prepended_being_completed="xt-";
+ xt_prepended_being_completed+=$being_completed;
+ if [[ $xt_prepended_match_string == $xt_prepended_being_completed ]]; then
+ echo "$x";
+ fi;
+ done;
+ fi
+}
+BASH_FUNC_moduleraw()=() {  eval `${MODULESHOME}/bin/modulecmd bash $*`
+}
+BASH_FUNC_modimp_show_all_if_ambiguous_on()=() {  if [ -f $HOME/.no_modimp ]; then
+ return;
+ fi;
+ if [ -f $HOME/.no_modimp_warning ]; then
+ echo "The file $HOME/.no_modimp_warning exists; modimp commands will not load.";
+ return;
+ fi;
+ bind 'set show-all-if-ambiguous on'
+}
+BASH_FUNC_modimp_tabcomplete_on()=() {  if [ -f $HOME/.no_modimp ]; then
+ return;
+ fi;
+ if [ -f $HOME/.no_modimp_warning ]; then
+ echo "The file $HOME/.no_modimp_warning exists; modimp commands will not load.";
+ return;
+ fi;
+ autocomplete_modules_setup;
+ complete -C autocomplete_modules module
+}
+BASH_FUNC_module()=() {  if [[ $1 == "purge" ]]; then
+ echo "";
+ echo "BEWARE: Running \"module purge\" puts your environment in an unreliable state.";
+ echo "Doing so makes it difficult to debug problems or for support staff to help";
+ echo "you. Please structure your build so that you don't have to do this.";
+ echo "";
+ fi;
+ if [[ $1 == "PrgEnvLoad" ]]; then
+ PRGMOD=`echo $LOADEDMODULES | tr ":" "\n" | grep PrgEnv`;
+ if [[ $PRGMOD == "" ]]; then
+ moduleraw load $2 $3 $4 $5 $6 2>&1;
+ return;
+ fi;
+ moduleraw swap $PRGMOD $2 $3 $4 $5 $6 2>&1;
+ return;
+ fi;
+ moduleraw $* 2>&1
+}
+BASH_FUNC_autocomplete_modules_setup()=() {  if [ $MODIMP_KEEP_MODULE_LIST_IN_ENV != "yes" ]; then
+ dated_modulefile_name="/tmp/.modimp_available_${USER}_`date +%Y_%m_%d`";
+ if [ ! -e ${dated_modulefile_name} ]; then
+ rm -f /tmp/.modimp_available_${USER}_*;
+ fi;
+ fi;
+ MODIMP_AVAILABLE_MODULES="";
+ mod_dir_list=$(echo $MODULEPATH | tr ":" "\n");
+ for moddir in $mod_dir_list;
+ do
+ directory_name_length=${#moddir};
+ file_list=$(find $moddir 2> /dev/null);
+ for filename in $file_list;
+ do
+ modname_position=$(($directory_name_length+1));
+ modname_and_version_length=$((${#filename}-$modname_position));
+ modulename_and_version=${filename:$modname_position:$modname_and_version_length};
+ modname_leading_character=${modulename_and_version:0:1};
+ if [[ $modname_leading_character == "." ]]; then
+ continue;
+ fi;
+ if [[ $modulename_and_version =~ \/\. ]]; then
+ continue;
+ fi;
+ MODIMP_AVAILABLE_MODULES+=$modulename_and_version;
+ MODIMP_AVAILABLE_MODULES+=":";
+ done;
+ done;
+ if [ $MODIMP_KEEP_MODULE_LIST_IN_ENV != "yes" ]; then
+ echo $MODIMP_AVAILABLE_MODULES > ${dated_modulefile_name};
+ export MODIMP_AVAILABLE_MODULES="";
+ else
+ export MODIMP_AVAILABLE_MODULES;
+ fi
+}
+BASH_FUNC_modimp_show_all_if_ambiguous_off()=() {  bind 'set show-all-if-ambiguous off'
+}
+BASH_FUNC_modimp_module_to_stdout_off()=() {  function module () 
+ { 
+ if [[ $1 == "purge" ]]; then
+ echo "";
+ echo "BEWARE: Running \"module purge\" puts your environment in an unreliable state.";
+ echo "Doing so makes it difficult to debug problems or for support staff to help";
+ echo "you. Please structure your build so that you don't have to do this.";
+ echo "";
+ fi;
+ eval `${MODULESHOME}/bin/modulecmd bash $*`
+ };
+ export -f module
+}
+BASH_FUNC_modimp_resync()=() {  rm -f /dev/shm/.modimp_available_${USER}_*;
+ autocomplete_modules_setup
+}
++ lsb_release -a
+LSB Version:	core-2.0-noarch:core-3.2-noarch:core-4.0-noarch:core-2.0-x86_64:core-3.2-x86_64:core-4.0-x86_64:desktop-4.0-amd64:desktop-4.0-noarch:graphics-2.0-amd64:graphics-2.0-noarch:graphics-3.2-amd64:graphics-3.2-noarch:graphics-4.0-amd64:graphics-4.0-noarch
+Distributor ID:	SUSE LINUX
+Description:	SUSE Linux Enterprise Server 11 (x86_64)
+Release:	11
+Codename:	n/a
++ uname -a
+Linux h2ologin1 3.0.101-0.47.106.59.1.17833.1.PTF-default #1 SMP Fri Jul 12 15:25:20 UTC 2019 (22227d7) x86_64 x86_64 x86_64 GNU/Linux
++ lscpu
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                64
+On-line CPU(s) list:   0-63
+Thread(s) per core:    2
+Core(s) per socket:    8
+Socket(s):             4
+NUMA node(s):          8
+Vendor ID:             AuthenticAMD
+CPU family:            21
+Model:                 1
+Stepping:              2
+CPU MHz:               2299.955
+BogoMIPS:              4599.96
+Virtualization:        AMD-V
+L1d cache:             16K
+L1i cache:             64K
+L2 cache:              2048K
+L3 cache:              6144K
+NUMA node0 CPU(s):     0-7
+NUMA node1 CPU(s):     8-15
+NUMA node2 CPU(s):     32-39
+NUMA node3 CPU(s):     40-47
+NUMA node4 CPU(s):     48-55
+NUMA node5 CPU(s):     56-63
+NUMA node6 CPU(s):     16-23
+NUMA node7 CPU(s):     24-31
++ cat /proc/meminfo
+MemTotal:       528496640 kB
+MemFree:        300840860 kB
+Buffers:         3036424 kB
+Cached:         60696588 kB
+SwapCached:        11536 kB
+Active:         136315628 kB
+Inactive:       47765960 kB
+Active(anon):   121343108 kB
+Inactive(anon):  8427472 kB
+Active(file):   14972520 kB
+Inactive(file): 39338488 kB
+Unevictable:       29416 kB
+Mlocked:               0 kB
+SwapTotal:      15999996 kB
+SwapFree:       14923232 kB
+Dirty:             35120 kB
+Writeback:             0 kB
+AnonPages:      120367288 kB
+Mapped:           210980 kB
+Shmem:           9394072 kB
+Slab:           34198300 kB
+SReclaimable:    1554292 kB
+SUnreclaim:     32644008 kB
+KernelStack:       17080 kB
+PageTables:       294100 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    280248316 kB
+Committed_AS:   151797076 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:     3931692 kB
+VmallocChunk:   33885850216 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:  113233920 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:      287204 kB
+DirectMap2M:    23803904 kB
+DirectMap1G:    512753664 kB
++ inxi -F -c0
+sc.bash: line 14: inxi: command not found
++ lsblk -a
+NAME   MAJ:MIN RM   SIZE RO MOUNTPOINT
+sda      8:0    0 837.8G  0 
+├─sda1   8:1    0  15.3G  0 [SWAP]
+└─sda2   8:2    0 822.5G  0 /
+sr0     11:0    1  1024M  0 
+loop0    7:0    0   5.4G  1 
+loop1    7:1    0   3.8G  1 
+loop2    7:2    0   5.4G  1 
+loop3    7:3    0   3.8G  1 
+loop4    7:4    0   5.4G  1 
+loop5    7:5    0   5.4G  1 
+loop6    7:6    0   5.4G  1 
+loop7    7:7    0   5.8G  1 
+loop8    7:8    0   5.8G  1 
+loop9    7:9    0   5.8G  1 
+loop10   7:10   0   5.4G  1 
+loop11   7:11   0    25G  0 
+loop12   7:12   0   5.4G  1 
+loop13   7:13   0         1 
++ lsscsi -s
+[0:0:0:0]    cd/dvd  PLDS     DVD-ROM DS-8D3SH HD51  /dev/sr0        -
+[4:0:32:0]   enclosu DP       BACKPLANE        1.07  -               -
+[4:2:0:0]    disk    DELL     PERC H700        2.10  /dev/sda    899GB
++ module list
++ [[ list == \p\u\r\g\e ]]
++ [[ list == \P\r\g\E\n\v\L\o\a\d ]]
++ moduleraw list
+++ /opt/modules/3.2.10.4/bin/modulecmd bash list
+Currently Loaded Modulefiles:
+  1) modules/3.2.10.4
+  2) eswrap/1.3.3-1.020200.1280.0
+  3) gcc/6.3.0
+  4) craype-interlagos
+  5) craype-network-gemini
+  6) craype/2.5.16
+  7) cray-mpich/7.7.4
+  8) torque/6.0.4
+  9) moab/9.1.2-sles11
+ 10) openssh/7.5p1
+ 11) xalt/0.7.6.local
+ 12) scripts
+ 13) OpenSSL/1.0.2m
+ 14) cURL/7.59.0
+ 15) git/2.17.0
+ 16) wget/1.19.4
+ 17) user-paths
+ 18) cray-libsci/18.12.1
+ 19) udreg/2.3.2-1.0502.10518.2.17.gem
+ 20) ugni/6.0-1.0502.10863.8.28.gem
+ 21) pmi/5.0.14
+ 22) dmapp/7.0.1-1.0502.11080.8.74.gem
+ 23) gni-headers/4.0-1.0502.10859.7.8.gem
+ 24) xpmem/0.1-2.0502.64982.5.3.gem
+ 25) dvs/2.5_0.9.0-1.0502.2188.1.113.gem
+ 26) alps/5.2.4-2.0502.9774.31.12.gem
+ 27) rca/1.0.0-2.0502.60530.1.63.gem
+ 28) atp/2.0.4
+ 29) PrgEnv-gnu/5.2.82
+ 30) ccm/2.2.1-1.0502.62540.4.51
+ 31) boost/1.63.0
++ eval
++ nvidia-smi
+sc.bash: line 18: nvidia-smi: command not found
++ lshw -short -quiet -sanitize
++ cat
+sc.bash: line 19: lshw: command not found
++ lspci
+sc.bash: line 19: lspci: command not found
